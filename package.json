@@ -13,7 +13,8 @@
     "astro": "astro",
     "lint:style-blocks": "node scripts/lint-style-blocks.mjs",
     "test:unit": "vitest run",
-    "test:unit:coverage": "vitest run --coverage"
+    "test:unit:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "astro": "^7.2.1",
@@ -23,6 +24,7 @@
   "description": "Release notes for a person.",
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@playwright/test": "^1.62.1",
     "@types/node": "^26.2.0",
     "@vitest/coverage-v8": "^4.1.10",
     "typescript": "^6.0.3",
