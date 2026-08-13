@@ -1,0 +1,76 @@
+---
+/**
+ * The full release history, paginated.
+ *
+ * The rest parameter is what puts page 1 at `/releases` rather than
+ * `/releases/1` — Astro passes `undefined` for the first page, and the bare
+ * URL is the canonical one.
+ */
+import type { GetStaticPaths, Page } from "astro";
+
+import Pagination from "../../components/Pagination.astro";
+import ReleaseCard from "../../components/ReleaseCard.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { pluralise } from "../../lib/format.ts";
+import { getAllReleases, type Release } from "../../lib/queries.ts";
+import { groupByMajor } from "../../lib/semver.ts";
+
+export const PAGE_SIZE = 12;
+
+export const getStaticPaths = (async ({ paginate }) => {
+	const releases = await getAllReleases();
+	return paginate([...releases], { pageSize: PAGE_SIZE });
+}) satisfies GetStaticPaths;
+
+interface Props {
+	page: Page<Release>;
+}
+
+const { page } = Astro.props;
+
+// Grouped within the page rather than across the whole archive: a major
+// heading has to sit above the releases actually printed below it.
+const groups = groupByMajor(page.data, (release) => release.version);
+
+const href = (number: number) => (number === 1 ? "/releases" : `/releases/${number}`);
+---
+
+<BaseLayout
+	title={page.currentPage === 1 ? "Releases" : `Releases, page ${page.currentPage}`}
+	description={`The full release history: ${page.total} releases from v31.0.0 to v34.2.1.`}
+>
+	<div class="wrapper region stack">
+		<header class="stack flow-space-2xs">
+			<h1>Releases</h1>
+			<p class="archive__count">
+				{pluralise(page.total, "release")}, newest first — page {page.currentPage} of {page.lastPage}
+			</p>
+		</header>
+
+		{
+			page.data.length === 0 ? (
+				<p class="archive__empty">
+					No releases yet. The record starts when the first one ships.
+				</p>
+			) : (
+				groups.map((group) => (
+					<section class="archive__major stack flow-space-xs">
+						<h2 class="archive__major-heading">v{group.major}.x</h2>
+						<div class="stack flow-space-xs">
+							{group.items.map((release) => (
+								<ReleaseCard release={release} headingLevel={3} />
+							))}
+						</div>
+					</section>
+				))
+			)
+		}
+
+		<Pagination
+			current={page.currentPage}
+			total={page.lastPage}
+			href={href}
+			label="Release archive pages"
+		/>
+	</div>
+</BaseLayout>

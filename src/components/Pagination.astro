@@ -1,0 +1,54 @@
+---
+/**
+ * Block: pagination. Real links, always — there is no JavaScript here to
+ * intercept a click, so anything that is not an anchor is not navigable.
+ */
+interface Props {
+	current: number;
+	total: number;
+	/** Page 1 lives at the bare URL, not at `/1`. */
+	href: (page: number) => string;
+	label?: string;
+}
+
+const { current, total, href, label = "Pagination" } = Astro.props;
+const pages = Array.from({ length: total }, (_, index) => index + 1);
+---
+
+{
+	total > 1 && (
+		<nav class="pagination repel" aria-label={label}>
+			{current > 1 ? (
+				<a class="pagination__step" rel="prev" href={href(current - 1)} aria-label="Previous page">
+					← Previous
+				</a>
+			) : (
+				<span class="pagination__step pagination__step--spent">← Previous</span>
+			)}
+
+			<ol class="pagination__pages cluster" role="list">
+				{pages.map((page) => (
+					<li>
+						{page === current ? (
+							<span class="pagination__page" aria-current="page" aria-label={`Page ${page}, current page`}>
+								{page}
+							</span>
+						) : (
+							<a class="pagination__page" href={href(page)} aria-label={`Page ${page}`}>
+								{page}
+							</a>
+						)}
+					</li>
+				))}
+			</ol>
+
+			{current < total ? (
+				<a class="pagination__step" rel="next" href={href(current + 1)} aria-label="Next page">
+					Next →
+				</a>
+			) : (
+				<span class="pagination__step pagination__step--spent">Next →</span>
+			)}
+		</nav>
+	)
+}
