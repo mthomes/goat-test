@@ -99,4 +99,35 @@ CI prints the table to the job summary on every run.
 | `npm run test:unit` | Vitest, single run (`-- --watch` to watch) |
 | `npm run test:unit:coverage` | …with v8 coverage into `coverage/` |
 | `npm run test:e2e` | Playwright against a production build |
+| `npm run test:guardrails` | Zero-JS and cascade-integrity assertions over `dist/` |
+| `npm run test:visual` | Visual regression against committed baselines |
+| `npm run test:lighthouse` | Lighthouse budgets against a production build |
+| `npm run lint:css` | Stylelint, including the CUBE layer rules |
 | `npm run trace` | Requirement traceability report |
+
+## Visual regression
+
+```sh
+npm run test:visual                        # compare against the baselines
+npm run test:visual -- --update-snapshots  # accept the current rendering
+```
+
+Baselines live in `tests/visual/__screenshots__/<platform>/<scheme>/` and are
+committed. Six pages × two colour schemes × three widths = **36 per platform**.
+
+**The platform matters.** CI runs on Linux and renders type differently from a
+developer's Mac — same fonts, different rasteriser. Both sets are committed, and
+Playwright picks the right one automatically. If you update baselines on macOS,
+regenerate the Linux set too or CI will fail:
+
+```sh
+docker run --rm -v "$PWD":/work -v /work/node_modules -v /work/dist \
+  -w /work --ipc=host mcr.microsoft.com/playwright:v1.62.1-noble \
+  bash -lc "npm ci && npx playwright test --config=playwright.visual.config.ts --update-snapshots"
+```
+
+Mounting anonymous volumes over `node_modules` and `dist` is not optional — the
+host's are built for macOS and the container will overwrite them otherwise.
+
+Update baselines only when a rendering change is **intended**, and say so in the
+PR. That is the entire value of the suite.

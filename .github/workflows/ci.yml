@@ -47,6 +47,21 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Visual regression
+        run: npm run test:visual
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: visual-diffs
+          path: |
+            test-results/
+            playwright-report-visual/
+          retention-days: 7
+
       - name: Guardrails
         run: npx vitest run --config vitest.guardrails.config.ts
 
