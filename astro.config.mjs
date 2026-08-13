@@ -1,13 +1,19 @@
 // @ts-check
+import sitemap from "@astrojs/sitemap";
 import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
-	// The public URL. Needed here rather than only at deploy time because the
-	// feed (#34) has to emit absolute links, and a feed reader has nothing
-	// else to resolve them against. #35 settles the canonical URLs on top of
-	// it and #39 wires the deploy.
-	site: "https://mthomes.github.io/goat-test",
+	// The production URL, settled here (#35) and used by the deploy (#39).
+	//
+	// This is a GitHub Pages *project* site, so it is served from a
+	// subdirectory rather than from the root. `base` has to be set for that,
+	// and every internal link has to carry it — `src/lib/format.ts` is the one
+	// place that happens, so there is a single thing to get right.
+	site: "https://mthomes.github.io",
+	base: "/goat-test",
+
+	integrations: [sitemap()],
 
 	vite: {
 		build: {

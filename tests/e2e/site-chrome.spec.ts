@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
 
 import { builtCss, layerBody } from "../helpers/built-css.ts";
+import { urlPattern } from "../helpers/routes.ts";
 
 /** The persistent chrome: a manual's running head and its colophon. */
 test.describe("site chrome", () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto("/");
+		await page.goto("");
 		await page.evaluate(() => document.fonts.ready);
 	});
 
@@ -43,7 +44,7 @@ test.describe("site chrome", () => {
 
 		await expect(nav.getByRole("link")).toHaveText(["Releases", "Tags", "Known Issues", "Stats"]);
 		for (const link of await nav.getByRole("link").all()) {
-			await expect(link).toHaveAttribute("href", /^\/[a-z-]+$/);
+			await expect(link).toHaveAttribute("href", new RegExp(`^${urlPattern("/")}[a-z-]+$`));
 		}
 	});
 
@@ -69,7 +70,7 @@ test.describe("site chrome", () => {
 
 	test("keeps the navigation usable at 320px with no menu toggle", { tag: ["@issue-11"] }, async ({ page }) => {
 		await page.setViewportSize({ width: 320, height: 720 });
-		await page.goto("/");
+		await page.goto("");
 
 		const links = page.getByRole("navigation", { name: "Primary" }).getByRole("link");
 		await expect(links).toHaveCount(4);

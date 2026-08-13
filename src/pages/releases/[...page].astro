@@ -11,7 +11,7 @@ import type { GetStaticPaths, Page } from "astro";
 import Pagination from "../../components/Pagination.astro";
 import ReleaseCard from "../../components/ReleaseCard.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { pluralise } from "../../lib/format.ts";
+import { pluralise, routes, withBase } from "../../lib/format.ts";
 import { getAllReleases, type Release } from "../../lib/queries.ts";
 import { groupByMajor } from "../../lib/semver.ts";
 
@@ -32,7 +32,8 @@ const { page } = Astro.props;
 // heading has to sit above the releases actually printed below it.
 const groups = groupByMajor(page.data, (release) => release.version);
 
-const href = (number: number) => (number === 1 ? "/releases" : `/releases/${number}`);
+const href = (number: number) =>
+	number === 1 ? routes.releases() : withBase(`/releases/${number}`);
 ---
 
 <BaseLayout

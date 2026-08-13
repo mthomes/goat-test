@@ -59,10 +59,20 @@ const description = release.summary
 	?? `Release ${release.version}: ${pluralise(release.changes.length, "change")} on ${formatDate(release.released)}.`;
 ---
 
-<BaseLayout title={`v${release.version}`} description={description}>
-	<div class="wrapper region stack">
+<BaseLayout
+	title={`v${release.version}`}
+	description={description}
+	article={{ published: release.released }}
+>
+	<!-- Structured data as microdata rather than JSON-LD: this site ships no
+	     <script> tag of any kind, and microdata says the same thing in
+	     attributes on markup that already exists. -->
+	<div class="wrapper region stack" itemscope itemtype="https://schema.org/Article">
+		<meta itemprop="datePublished" content={isoDate(release.released)} />
+		<meta itemprop="description" content={description} />
+
 		<header class="release-hero stack flow-space-xs">
-			<h1 class="release-hero__version" data-release-type={release.releaseType}>
+			<h1 class="release-hero__version" data-release-type={release.releaseType} itemprop="headline">
 				v{release.version}
 			</h1>
 

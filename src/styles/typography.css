@@ -23,7 +23,12 @@
 	/* --------------------------------------------------------- the faces --
 	 * Latin subset only, woff2 only, `swap` so text is readable immediately
 	 * and reflows once rather than hiding behind an invisible-text flash.
-	 * The two 400 weights are preloaded from the document head. */
+	 * The two 400 weights are preloaded from the document head.
+	 *
+	 * URLs are written root-relative without the site's base path: Astro rewrites
+	 * them at build time, and a guardrail asserts the built CSS carries it. CSS
+	 * cannot read `import.meta.env.BASE_URL`, so writing the base out by hand
+	 * here would be a second copy of it waiting to drift. */
 
 	@font-face {
 		font-family: "Charis SIL";

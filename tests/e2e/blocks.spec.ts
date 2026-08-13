@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { url } from "../helpers/routes.ts";
+
 import { builtCss, layerBody } from "../helpers/built-css.ts";
 
 /**
@@ -9,12 +11,12 @@ import { builtCss, layerBody } from "../helpers/built-css.ts";
  */
 test.describe("core content blocks", () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto("/");
+		await page.goto("");
 		await page.evaluate(() => document.fonts.ready);
 	});
 
 	test("metadata-table prints RELEASED / TYPE / CHANGES in mono", { tag: ["@issue-24"] }, async ({ page }) => {
-		await page.goto("/releases/34.2.1");
+		await page.goto("releases/34.2.1");
 		const table = page.locator(".metadata-table");
 		await expect(table).toBeVisible();
 
@@ -101,12 +103,12 @@ test.describe("core content blocks", () => {
 		expect(await tags.count()).toBeGreaterThan(0);
 
 		for (const tag of await tags.all()) {
-			await expect(tag).toHaveAttribute("href", /^\/tags\/[a-z0-9-]+$/);
+			await expect(tag).toHaveAttribute("href", /^\/goat-test\/tags\/[a-z0-9-]+$/);
 		}
 	});
 
 	test("known-issue-item shows state, opened-in and age", { tag: ["@issue-24"] }, async ({ page }) => {
-		await page.goto("/known-issues");
+		await page.goto("known-issues");
 		const issue = page.locator(".known-issue").first();
 
 		await expect(issue).toHaveAttribute("data-state", /open|resolved/);

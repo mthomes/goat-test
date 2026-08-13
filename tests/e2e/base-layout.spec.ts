@@ -1,12 +1,14 @@
 import { expect, test } from "@playwright/test";
 
+import { url } from "../helpers/routes.ts";
+
 /**
  * The document shell every page renders through. Asserted against the built
  * site, so what is checked is what ships.
  */
 test.describe("base layout", () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto("/");
+		await page.goto("");
 	});
 
 	test("declares language, charset and viewport", { tag: ["@issue-10"] }, async ({ page }) => {
@@ -28,14 +30,14 @@ test.describe("base layout", () => {
 	});
 
 	test("sets a favicon and a theme colour", { tag: ["@issue-10"] }, async ({ page }) => {
-		await expect(page.locator('head link[rel="icon"]')).toHaveAttribute("href", "/favicon.svg");
+		await expect(page.locator('head link[rel="icon"]')).toHaveAttribute("href", url("/favicon.svg"));
 		const themeColours = page.locator('head meta[name="theme-color"]');
 		await expect(themeColours).toHaveCount(2);
 		for (const meta of await themeColours.all()) {
 			await expect(meta).toHaveAttribute("content", /^#[0-9a-f]{6}$/);
 			await expect(meta).toHaveAttribute("media", /prefers-color-scheme: (light|dark)/);
 		}
-		expect((await page.request.get("/favicon.svg")).status()).toBe(200);
+		expect((await page.request.get(url("/favicon.svg"))).status()).toBe(200);
 	});
 
 	test("imports the stylesheet exactly once", { tag: ["@issue-10", "@issue-9"] }, async ({ page }) => {

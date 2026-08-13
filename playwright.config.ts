@@ -9,7 +9,14 @@ import { defineConfig, devices } from "@playwright/test";
  * therefore builds and previews rather than running `astro dev`.
  */
 const PORT = 4321;
-const BASE_URL = `http://localhost:${PORT}`;
+
+/**
+ * The site is published from a subdirectory, so the preview serves it from one
+ * too. Specs navigate with paths relative to this — `page.goto("releases")`,
+ * not `page.goto("/releases")`, since a leading slash resets to the origin and
+ * would silently test URLs the deployed site does not have.
+ */
+const BASE_URL = `http://localhost:${PORT}/goat-test/`;
 
 export default defineConfig({
 	testDir: "tests/e2e",

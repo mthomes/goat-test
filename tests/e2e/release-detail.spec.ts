@@ -1,19 +1,21 @@
 import { expect, test } from "@playwright/test";
 
+import { url } from "../helpers/routes.ts";
+
 /** The canonical view of a single release, at `/releases/[version]`. */
 test.describe("release detail", () => {
 	test("generates a page per release", { tag: ["@issue-25"] }, async ({ page }) => {
 		// Spot-checked at both ends and across a major boundary; the exhaustive
 		// walk lives in the prev/next test below.
 		for (const version of ["31.0.0", "32.0.0", "33.2.1", "34.2.1"]) {
-			const response = await page.goto(`/releases/${version}`);
+			const response = await page.goto(`releases/${version}`);
 			expect(response?.status(), version).toBe(200);
 			await expect(page.getByRole("heading", { level: 1 })).toHaveText(`v${version}`);
 		}
 	});
 
 	test("sets the version as the hero, metadata beneath", { tag: ["@issue-25"] }, async ({ page }) => {
-		await page.goto("/releases/32.0.0");
+		await page.goto("releases/32.0.0");
 		await page.evaluate(() => document.fonts.ready);
 
 		const hero = page.locator(".release-hero__version");
@@ -36,18 +38,18 @@ test.describe("release detail", () => {
 	});
 
 	test("renders the prose summary and commentary when present", { tag: ["@issue-25"] }, async ({ page }) => {
-		await page.goto("/releases/32.0.0");
+		await page.goto("releases/32.0.0");
 		await expect(page.locator(".release-summary")).not.toBeEmpty();
 		await expect(page.locator(".release-body")).toContainText(/eleven months/i);
 
 		// And omits them cleanly when there are none.
-		await page.goto("/releases/31.0.1");
+		await page.goto("releases/31.0.1");
 		await expect(page.locator(".release-summary")).toHaveCount(0);
 		await expect(page.locator(".release-body")).toHaveCount(0);
 	});
 
 	test("groups changes by type in a stable order under small-caps labels", { tag: ["@issue-25"] }, async ({ page }) => {
-		await page.goto("/releases/32.0.0");
+		await page.goto("releases/32.0.0");
 		await page.evaluate(() => document.fonts.ready);
 
 		const labels = await page.locator(".change-list__label").allInnerTexts();
@@ -66,7 +68,7 @@ test.describe("release detail", () => {
 
 	test("shows known issues with their state and age", { tag: ["@issue-25", "@issue-21"] }, async ({ page }) => {
 		// 31.0.0 opens the issue that is still open in the last release.
-		await page.goto("/releases/31.0.0");
+		await page.goto("releases/31.0.0");
 
 		const issue = page.locator(".known-issue").first();
 		await expect(issue).toHaveAttribute("data-state", "open");
@@ -76,11 +78,11 @@ test.describe("release detail", () => {
 
 	test("links a resolution back to where the issue opened", { tag: ["@issue-25", "@issue-21"] }, async ({ page }) => {
 		// 32.1.0 fixes the damp patch opened in 31.1.1.
-		await page.goto("/releases/32.1.0");
+		await page.goto("releases/32.1.0");
 
 		const backlink = page.locator(".change-entry__resolves a").first();
 		await expect(backlink).toContainText("opened in 31.1.1");
-		await expect(backlink).toHaveAttribute("href", "/releases/31.1.1#damp-patch-bathroom");
+		await expect(backlink).toHaveAttribute("href", url("/releases/31.1.1#damp-patch-bathroom"));
 
 		// And the link lands on the issue itself, not merely on the page.
 		await backlink.click();
@@ -91,7 +93,7 @@ test.describe("release detail", () => {
 	test("navigates previous and next across the whole history", { tag: ["@issue-25"] }, async ({ page }) => {
 		// Walked end to end rather than spot-checked: off-by-one at the
 		// boundaries is the likely bug, and it only shows at the ends.
-		await page.goto("/releases/31.0.0");
+		await page.goto("releases/31.0.0");
 		await expect(page.locator(".release-nav__end")).toContainText("Earliest release");
 
 		const visited: string[] = [];
@@ -114,12 +116,12 @@ test.describe("release detail", () => {
 	});
 
 	test("links tags through to their tag pages", { tag: ["@issue-25"] }, async ({ page }) => {
-		await page.goto("/releases/31.0.0");
+		await page.goto("releases/31.0.0");
 
 		const tags = page.locator(".tag-list__tag");
 		expect(await tags.count()).toBeGreaterThan(0);
 		for (const tag of await tags.all()) {
-			await expect(tag).toHaveAttribute("href", /^\/tags\/[a-z0-9-]+$/);
+			await expect(tag).toHaveAttribute("href", /^\/goat-test\/tags\/[a-z0-9-]+$/);
 		}
 	});
 });

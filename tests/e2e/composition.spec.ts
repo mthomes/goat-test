@@ -45,7 +45,7 @@ const WIDTHS = [320, 768, 1440] as const;
 /** Renders the scratch markup inside the real page, keeping the real CSS. */
 async function scratch(page: import("@playwright/test").Page, width: number) {
 	await page.setViewportSize({ width, height: 900 });
-	await page.goto("/");
+	await page.goto("");
 	await page.evaluate((html) => {
 		document.querySelector("main")!.innerHTML = html;
 	}, SCRATCH);
