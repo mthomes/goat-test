@@ -1,0 +1,32 @@
+---
+/**
+ * Block: site-footer. The colophon off the back of a manual: what it was set
+ * in, when this copy was printed, and where the plates are kept.
+ */
+import { formatDate, isoDate } from "../lib/format.ts";
+import { SITE } from "../lib/site.ts";
+
+// Build time, not request time — the site is static, so this is when this
+// copy was printed. `data-build-date` marks it for masking in the visual
+// regression baselines (#50), which would otherwise fail once a day.
+const builtAt = new Date();
+---
+
+<footer class="site-footer">
+	<div class="wrapper stack flow-space-2xs">
+		<p class="site-footer__colophon">
+			{SITE.name} is set in <a href="https://software.sil.org/charis/">Charis SIL</a>, a
+			descendant of Bitstream Charter (Matthew Carter, 1987), with metadata in
+			<a href="https://www.ibm.com/plex/">IBM Plex Mono</a>.
+		</p>
+		<p class="site-footer__meta cluster">
+			<span>
+				Printed <time datetime={isoDate(builtAt)} data-build-date>{formatDate(builtAt)}</time>
+			</span>
+			<span aria-hidden="true">·</span>
+			<a href={SITE.source}>Source</a>
+			<span aria-hidden="true">·</span>
+			<span>No JavaScript was shipped in the making of this page.</span>
+		</p>
+	</div>
+</footer>

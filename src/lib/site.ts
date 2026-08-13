@@ -15,6 +15,7 @@ export const SITE = {
 	 * test (#49) asserts they stay equal to the tokens rather than trusting a
 	 * comment to keep them that way.
 	 */
+	source: "https://github.com/mthomes/goat-test",
 	themeColour: {
 		light: "#f2ede1",
 		dark: "#131a21",
