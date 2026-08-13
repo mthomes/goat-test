@@ -1,4 +1,127 @@
-/* CUBE: exception. Documented, deliberate local variation.
- * Conventions settled in #18. */
+/* =========================================================================
+ * CUBE: exception
+ * =========================================================================
+ *
+ * CUBE's E: documented, deliberate local variation. Last layer in the order,
+ * so anything here wins — which is exactly why it needs a rule about what is
+ * allowed in, and why that rule is written down rather than assumed.
+ *
+ * ── The convention ──────────────────────────────────────────────────────
+ *
+ * **Exceptions are `data-*` attributes, never modifier classes.**
+ *
+ * A modifier class (`.release-card--major`) puts the variation in the same
+ * namespace as the thing it varies, so `class` becomes a list of two
+ * different kinds of statement and nothing in the markup says which is which.
+ * A `data-*` attribute says out loud that this is *state*: it is machine
+ * readable, it is greppable, it can be asserted in a test, and it cannot be
+ * mistaken for a Block.
+ *
+ * **An exception retunes a Block's own knobs; it does not reach inside one.**
+ *
+ * Almost everything below sets a custom property that some Block already
+ * consumes. That keeps the two decoupled — the Block decides what a rule
+ * weight or a sigil *does*, the exception decides which one this instance
+ * gets — and it stops this layer from accumulating opinions about internal
+ * structure it has no business knowing.
+ *
+ * ── When an exception is legitimate ─────────────────────────────────────
+ *
+ * Legitimate when ALL of these hold:
+ *
+ *   1. It varies an existing Block rather than describing a new one.
+ *   2. The variation is driven by *data* — a release's type, a change's type,
+ *      an issue's state — not by where the thing happens to sit on a page.
+ *   3. The Block still makes sense without it. Remove the attribute and you
+ *      get the unexceptional version, not a broken one.
+ *
+ * It signals a **missing Block** when:
+ *
+ *   - The exception is longer than the Block it modifies.
+ *   - It changes layout rather than treatment. Layout is Composition's job.
+ *   - It only applies on one page. That is a page-specific Block, or the page
+ *     is doing something the design system has not been asked for yet.
+ *   - You find yourself writing `[data-x] [data-y] .thing` to reach a target.
+ *     Specificity climbing in the last layer means the model is wrong, and
+ *     the layer order will happily hide that from you.
+ *
+ * **No `!important`, ever.** The layer order is the conflict-resolution
+ * mechanism. An `!important` in the last layer is a statement that the order
+ * itself is wrong, and it would be the only thing in the project able to
+ * defeat it.
+ * ========================================================================= */
+
 @layer exception {
+	/* ------------------------------------------------------- release type --
+	 *
+	 * Derived, never authored (#20). A major is a genuinely larger event than
+	 * a patch and the page should say so before the reader has read a word:
+	 * a heavier rule above it, and the version number in the accent.
+	 */
+	[data-release-type="major"] {
+		--release-rule: var(--rule-line-heavy);
+		--release-version-colour: var(--colour-accent);
+	}
+
+	[data-release-type="minor"] {
+		--release-rule: var(--rule-line-strong);
+	}
+
+	[data-release-type="patch"] {
+		--release-rule: var(--rule-line);
+	}
+
+	/* -------------------------------------------------------- change type --
+	 *
+	 * The sigil, and only the sigil. The Block owns the slot it prints into
+	 * and its alignment; this decides which mark goes in it.
+	 *
+	 * Never a coloured pill. A 1987 manual had one ink for the body and
+	 * marked its errata with the marks already in the case.
+	 */
+	[data-change-type="added"] {
+		--sigil: var(--sigil-added);
+	}
+
+	[data-change-type="fixed"] {
+		--sigil: var(--sigil-fixed);
+	}
+
+	[data-change-type="changed"] {
+		--sigil: var(--sigil-changed);
+	}
+
+	[data-change-type="removed"] {
+		--sigil: var(--sigil-removed);
+	}
+
+	[data-change-type="deprecated"] {
+		--sigil: var(--sigil-deprecated);
+	}
+
+	[data-change-type="known-issue"] {
+		--sigil: var(--sigil-known-issue);
+	}
+
+	/* ------------------------------------------------------- issue state --
+	 *
+	 * Open versus resolved, expressed here rather than by two different
+	 * Blocks — a resolved issue is the same object with a different state,
+	 * and modelling it as a separate Block would duplicate the whole thing to
+	 * change an ink and a mark.
+	 */
+	[data-state="open"] {
+		--sigil: var(--sigil-known-issue);
+		--state-rule: var(--rule-line-strong);
+	}
+
+	/* The one direct property override in this layer, and the reason the
+	 * layer's position in the order is load-bearing rather than decorative:
+	 * a resolved issue is history, so it prints in the muted ink whatever the
+	 * Block set. */
+	[data-state="resolved"] {
+		--sigil: var(--sigil-fixed);
+		--state-rule: var(--rule-line);
+		color: var(--colour-ink-muted);
+	}
 }
