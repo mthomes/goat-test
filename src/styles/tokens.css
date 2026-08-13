@@ -120,6 +120,17 @@
 		--measure: 66ch;
 		--measure-narrow: 46ch;
 
+		/* -------------------------------------------------- layout sizes --
+		 *
+		 * The page shell's own dimensions. These belong to the composition
+		 * layer's job but their *values* are design decisions, so like every
+		 * other literal in the project they live here.
+		 */
+		--layout-max: 72rem;
+		--layout-gutter: var(--space-s-m);
+		--layout-sidebar: 18rem;
+		--layout-grid-min: 18rem;
+
 		/* ---------------------------------------------- rules and borders --
 		 *
 		 * A printed manual rules its page in a small number of fixed weights

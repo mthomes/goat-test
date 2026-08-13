@@ -1,4 +1,116 @@
-/* CUBE: composition. Layout primitives — no colour, no typography, no borders.
- * Authored in #14. */
+/* =========================================================================
+ * CUBE: composition
+ * =========================================================================
+ *
+ * Layout primitives that arrange things without knowing what those things
+ * are. This layer should do the overwhelming majority of the layout work in
+ * the project, and it is the only layer allowed to.
+ *
+ * Two rules hold every primitive here honest:
+ *
+ *   1. Layout only. No colour, no typography, no borders, no backgrounds. A
+ *      primitive that wants to know what it contains has stopped being a
+ *      primitive and belongs in the Block layer.
+ *   2. Configured by custom property, never by modifier class. Each primitive
+ *      exposes its own `--name-*` properties with a token as the default, so
+ *      a block can retune one instance without a new class or a new selector.
+ *
+ * Bare numbers and percentages below (`flex-grow: 999`, `min-inline-size:
+ * 60%`) are ratios intrinsic to the technique rather than design decisions,
+ * so they are not tokenised. Every length is.
+ * ========================================================================= */
+
 @layer composition {
+	/* ------------------------------------------------------------- stack --
+	 *
+	 * Vertical rhythm through the lobotomised owl: space goes *between*
+	 * siblings and never on the outside, so a stack can be dropped into
+	 * anything without leaking margin into its container.
+	 */
+	.stack {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+	}
+
+	.stack > * {
+		margin-block: 0;
+	}
+
+	.stack > * + * {
+		margin-block-start: var(--flow-space);
+	}
+
+	/* Nested stacks inherit the outer rhythm unless they say otherwise, which
+	 * is what stops a stack of stacks collapsing into one undifferentiated
+	 * column. */
+	.stack > .stack {
+		--flow-space: var(--flow-space-tight);
+	}
+
+	/* ----------------------------------------------------------- cluster --
+	 * Wrapping horizontal groups: tags, nav items, metadata pairs. */
+	.cluster {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--cluster-gap, var(--space-2xs-xs));
+		align-items: var(--cluster-align, center);
+		justify-content: var(--cluster-justify, flex-start);
+	}
+
+	/* ----------------------------------------------------------- wrapper --
+	 * The page's own column: centred, capped, and gutter-padded so nothing
+	 * ever touches the edge of the viewport. */
+	.wrapper {
+		margin-inline: auto;
+		padding-inline: var(--wrapper-gutter, var(--layout-gutter));
+		max-inline-size: var(--wrapper-max, var(--layout-max));
+	}
+
+	/* ----------------------------------------------------------- sidebar --
+	 *
+	 * Two columns that become one without a media query. The sidebar takes a
+	 * fixed basis and the main column takes everything else; when the main
+	 * column can no longer hold its minimum share of the line, the pair wraps
+	 * on its own. Element queries, achieved in 1994 flexbox.
+	 */
+	.sidebar {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--sidebar-gap, var(--space-m-l));
+	}
+
+	.sidebar > :first-child {
+		flex-basis: var(--sidebar-width, var(--layout-sidebar));
+		flex-grow: 1;
+	}
+
+	.sidebar > :last-child {
+		flex-basis: 0;
+		flex-grow: 999;
+		min-inline-size: var(--sidebar-content-min, 60%);
+	}
+
+	/* -------------------------------------------------------------- grid --
+	 * Auto-fitting tracks with a minimum size. `min()` against 100% keeps the
+	 * minimum from overflowing a viewport narrower than the track. */
+	.grid {
+		display: grid;
+		gap: var(--grid-gap, var(--space-m));
+		grid-template-columns: repeat(
+			auto-fit,
+			minmax(min(var(--grid-min, var(--layout-grid-min)), 100%), 1fr)
+		);
+	}
+
+	/* ------------------------------------------------------------- repel --
+	 * A pair pushed to opposite ends, falling back to a stack when there is
+	 * no room to push. Header rows, metadata lines, pagination. */
+	.repel {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--repel-gap, var(--space-xs-s));
+		align-items: var(--repel-align, center);
+		justify-content: space-between;
+	}
 }
