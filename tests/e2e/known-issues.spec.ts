@@ -1,6 +1,5 @@
 import { expect, test } from "@playwright/test";
 
-import { url } from "../helpers/routes.ts";
 
 /** The tracker: everything still broken, and everything since fixed. */
 test.describe("known issues tracker", () => {
