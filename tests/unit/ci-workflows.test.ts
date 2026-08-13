@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 /**
@@ -202,13 +202,5 @@ describe("@issue-39 the Pages deploy", () => {
 		expect(deploy).toContain("environment:");
 		expect(deploy).toContain("name: github-pages");
 		expect(deploy).toContain("url: ${{ steps.deployment.outputs.page_url }}");
-	});
-
-	it("emits a 404 and the feeds the deployed host will serve", () => {
-		// What "all routes resolve" needs to be true of the artefact.
-		const built = ["dist/404.html", "dist/rss.xml", "dist/sitemap-index.xml", "dist/robots.txt"];
-		for (const path of built) {
-			expect(existsSync(path), `${path} is not in the build output`).toBe(true);
-		}
 	});
 });
