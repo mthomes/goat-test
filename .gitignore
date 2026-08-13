@@ -34,3 +34,5 @@ blob-report/
 
 # lighthouse
 .lighthouseci/
+playwright-report-visual/
+test-results-visual/

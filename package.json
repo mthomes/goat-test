@@ -20,7 +20,8 @@
     "validate:feed": "node scripts/validate-feed.mjs",
     "test:guardrails": "npm run build && vitest run --config vitest.guardrails.config.ts",
     "lint:css": "stylelint \"src/**/*.css\"",
-    "test:lighthouse": "npm run build && lhci autorun --config=lighthouserc.cjs"
+    "test:lighthouse": "npm run build && lhci autorun --config=lighthouserc.cjs",
+    "test:visual": "playwright test --config=playwright.visual.config.ts"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
