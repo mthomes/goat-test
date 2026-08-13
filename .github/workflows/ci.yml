@@ -131,24 +131,22 @@ jobs:
       - run: npm ci
 
       # Browsers are ~400MB and unchanged between runs; keyed by the Playwright
-      # version so a bump invalidates the cache rather than using stale binaries.
+      # version so a bump invalidates the cache rather than using stale
+      # binaries, and by the browser set so this job cannot pick up the
+      # visual job's chromium-only cache and then fail to launch Firefox.
       - name: Resolve Playwright version
         id: playwright
         run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
 
       - uses: actions/cache@v4
-        id: browsers
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+          key: playwright-all-${{ runner.os }}-${{ steps.playwright.outputs.version }}
 
+      # Run unconditionally: it is a no-op when the cache restored everything,
+      # and it is the difference between a fast job and a correct one.
       - name: Install browsers
-        if: steps.browsers.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium firefox webkit
-
-      - name: Install system deps
-        if: steps.browsers.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium firefox webkit
 
       # E2E, a11y and contrast all live in this suite and shard together.
       - name: Playwright
@@ -218,19 +216,15 @@ jobs:
         id: playwright
         run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> "$GITHUB_OUTPUT"
 
+      # Its own cache key: this job needs chromium only, and sharing a key with
+      # the E2E job would let whichever ran first decide what the other gets.
       - uses: actions/cache@v4
-        id: browsers
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+          key: playwright-chromium-${{ runner.os }}-${{ steps.playwright.outputs.version }}
 
       - name: Install browsers
-        if: steps.browsers.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
-
-      - name: Install system deps
-        if: steps.browsers.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
 
       # Compares against the committed Linux baselines. macOS baselines are
       # committed too; Playwright picks by platform.

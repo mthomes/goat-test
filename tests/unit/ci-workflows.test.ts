@@ -114,11 +114,23 @@ describe("@issue-51 the full suite in CI", () => {
 		expect(pkg.scripts["test:e2e"]).toBeTruthy();
 	});
 
-	it("caches Playwright browsers, keyed by the Playwright version", () => {
+	it("caches Playwright browsers, keyed by version and by browser set", () => {
 		expect(ci).toContain("~/.cache/ms-playwright");
-		expect(ci).toMatch(/key: playwright-\$\{\{ runner\.os \}\}-\$\{\{ steps\.playwright\.outputs\.version \}\}/);
-		// A cache hit still needs the system libraries.
-		expect(ci).toContain("playwright install-deps");
+
+		// Keyed by the Playwright version, so a bump invalidates the cache…
+		const keys = [...ci.matchAll(/key: (playwright-[^\n]+)/g)].map((match) => match[1]);
+		expect(keys.length).toBeGreaterThanOrEqual(2);
+		for (const key of keys) {
+			expect(key).toContain("${{ steps.playwright.outputs.version }}");
+		}
+
+		// …and by the browser set, so the chromium-only visual job cannot hand
+		// the three-browser E2E job a cache with no Firefox in it.
+		expect(new Set(keys).size).toBe(keys.length);
+
+		// The install runs unconditionally: a no-op on a full cache hit, and
+		// the difference between a fast job and a correct one otherwise.
+		expect(ci).not.toContain("if: steps.browsers.outputs.cache-hit");
 	});
 
 	it("shards the E2E suite across parallel jobs", () => {
