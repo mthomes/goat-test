@@ -1,20 +1,20 @@
 ---
-import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { buildKnownIssues, openKnownIssues } from "../lib/known-issues.ts";
+import { getAllReleases, getKnownIssues, getStats } from "../lib/queries.ts";
 import { SITE } from "../lib/site.ts";
 
-// Placeholder. The real home page arrives with #27; this exists so the
-// content model is exercised at build time — which is what makes the
-// known-issue lifecycle's failure modes break the build rather than warn.
-const releases = (await getCollection("releases")).map((entry) => entry.data);
-const knownIssues = buildKnownIssues(releases);
-const open = openKnownIssues(knownIssues);
+// Placeholder. The real home page arrives with #27.
+const releases = await getAllReleases();
+const { open } = await getKnownIssues();
+const stats = await getStats();
 ---
 
 <BaseLayout title={SITE.name} description={SITE.description}>
 	<div class="wrapper region stack">
 		<h1>{SITE.name}</h1>
-		<p>{open.length} open known issues across {releases.length} releases.</p>
+		<p>
+			{stats.totalReleases} releases, {stats.totalChanges} changes, {open.length} still
+			broken. Latest: {releases[0].version}.
+		</p>
 	</div>
 </BaseLayout>
