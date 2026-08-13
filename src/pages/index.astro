@@ -1,59 +1,97 @@
 ---
+/**
+ * The front door: the latest release in full, then recent history.
+ *
+ * Built last on purpose, so it composes from blocks that have already proved
+ * themselves elsewhere rather than inventing new ones. Nothing on this page is
+ * a home-page-only component.
+ */
 import ChangeList from "../components/ChangeList.astro";
-import KnownIssueItem from "../components/KnownIssueItem.astro";
 import MetadataTable from "../components/MetadataTable.astro";
 import ReleaseCard from "../components/ReleaseCard.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { formatDate, isoDate, pluralise, releaseTypeLabel, routes } from "../lib/format.ts";
-import { getAllReleases, getKnownIssues } from "../lib/queries.ts";
+import { getAllReleases, getKnownIssues, getStats } from "../lib/queries.ts";
 import { SITE } from "../lib/site.ts";
 
-// Placeholder composed from the blocks in #24. The real home page arrives
-// with #27, and the release pages these link to arrive with #25.
 const releases = await getAllReleases();
 const { all: knownIssues, open } = await getKnownIssues();
-const latest = releases[0];
+const stats = await getStats();
 
-// #27 replaces this page. Until then it degrades rather than throwing when
-// the collection is empty, which is a legitimate day-one state.
+const latest = releases[0];
+const recent = releases.slice(1, 7);
 
 const openedIn = Object.fromEntries(
 	knownIssues.map((issue) => [
 		issue.id,
-		{ version: issue.openedIn, href: routes.release(issue.openedIn) },
+		{ version: issue.openedIn, href: `${routes.release(issue.openedIn)}#${issue.id}` },
 	]),
 );
 ---
 
 <BaseLayout title={SITE.name} description={SITE.description}>
 	<div class="wrapper region stack">
-		<h1>{SITE.name}</h1>
+		<header class="masthead stack flow-space-xs">
+			<h1 class="masthead__title">{SITE.name}</h1>
+			<p class="masthead__standfirst measure">
+				Release notes for a person. Every change to one life since March 2021,
+				semantically versioned — majors on birthdays, minors for new capabilities,
+				patches for everything that turned out to be wrong.
+			</p>
+		</header>
 
-		{!latest && <p>No releases yet. The record starts when the first one ships.</p>}
+		{
+			latest ? (
+				<>
+					<section class="stack" aria-labelledby="latest">
+						<div class="release-hero stack flow-space-xs">
+							<h2 class="release-hero__version" id="latest" data-release-type={latest.releaseType}>
+								<a href={routes.release(latest.version)}>v{latest.version}</a>
+							</h2>
 
-		{latest && (
-		<>
-		<MetadataTable
-			label="Release metadata"
-			rows={[
-				{ label: "Released", value: formatDate(latest.released), datetime: isoDate(latest.released) },
-				{ label: "Type", value: releaseTypeLabel(latest.releaseType) },
-				{ label: "Changes", value: pluralise(latest.changes.length, "entry", "entries") },
-			]}
-		/>
+							<MetadataTable
+								label={`Metadata for release ${latest.version}`}
+								rows={[
+									{
+										label: "Released",
+										value: formatDate(latest.released),
+										datetime: isoDate(latest.released),
+									},
+									{ label: "Type", value: releaseTypeLabel(latest.releaseType) },
+									{
+										label: "Changes",
+										value: pluralise(latest.changes.length, "entry", "entries"),
+									},
+									{ label: "Still open", value: pluralise(open.length, "known issue") },
+								]}
+							/>
+						</div>
 
-		<ChangeList groups={latest.changesByType} openedIn={openedIn} />
+						{latest.summary && <p class="release-summary measure">{latest.summary}</p>}
 
-		<h2>Recent releases</h2>
-		<div class="stack">
-			{releases.slice(1, 5).map((release) => <ReleaseCard release={release} />)}
-		</div>
+						<ChangeList groups={latest.changesByType} headingLevel={3} openedIn={openedIn} />
+					</section>
 
-		<h2>Known issues</h2>
-		<div class="stack">
-			{open.map((issue) => <KnownIssueItem issue={issue} />)}
-		</div>
-		</>
-		)}
+					<section class="stack flow-space-xs" aria-labelledby="recent">
+						<h2 class="change-list__label" id="recent">Recently</h2>
+						<div class="stack flow-space-xs">
+							{recent.map((release) => (
+								<ReleaseCard release={release} headingLevel={3} />
+							))}
+						</div>
+					</section>
+				</>
+			) : (
+				<p class="archive__empty">No releases yet. The record starts when the first one ships.</p>
+			)
+		}
+
+		<nav class="home-links cluster" aria-label="Elsewhere">
+			<a href={routes.releases()}>All {stats.totalReleases} releases →</a>
+			<a href={routes.knownIssues()}>
+				{pluralise(open.length, "known issue")} still open →
+			</a>
+			<a href={routes.stats()}>Statistics →</a>
+		</nav>
 	</div>
 </BaseLayout>

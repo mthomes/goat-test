@@ -1,0 +1,31 @@
+/* The title block off the front of the manual: the product name, and one
+ * paragraph saying what it is. */
+@layer block {
+	.masthead {
+		padding-block-end: var(--space-s);
+		border-block-end: var(--rule-line-heavy);
+	}
+
+	.masthead__title {
+		max-inline-size: none;
+		font-family: var(--font-mono);
+		font-size: var(--step-4);
+		letter-spacing: var(--tracking-tight);
+	}
+
+	.masthead__standfirst {
+		color: var(--colour-ink-muted);
+		font-size: var(--step-1);
+		line-height: var(--leading-heading);
+	}
+
+	.home-links {
+		--cluster-gap: var(--space-2xs) var(--space-m);
+
+		margin-block-start: var(--space-l);
+		padding-block-start: var(--space-s);
+		border-block-start: var(--rule-line-strong);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+	}
+}
