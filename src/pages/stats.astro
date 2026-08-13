@@ -8,6 +8,7 @@
  *
  * Every figure comes from getStats(). Nothing on this page is computed here.
  */
+import CadenceHeatmap from "../components/CadenceHeatmap.astro";
 import MetadataTable from "../components/MetadataTable.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import {
@@ -97,6 +98,7 @@ const ratio =
 					},
 				]}
 			/>
+			<CadenceHeatmap months={cadence.byMonth} />
 		</section>
 
 		<section class="stack flow-space-xs" aria-labelledby="issues">

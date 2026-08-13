@@ -1,0 +1,102 @@
+---
+/**
+ * Release frequency across the whole span, as a CSS grid.
+ *
+ * No charting library and no JavaScript — it is a grid of coloured cells, and
+ * a grid of coloured cells is what a heatmap is.
+ *
+ * The grid itself is `aria-hidden`: a screen reader given 47 unlabelled cells
+ * learns nothing. The same data follows as a real table, hidden visually and
+ * read out in full.
+ */
+import type { MonthCount } from "../lib/queries.ts";
+
+interface Props {
+	months: readonly MonthCount[];
+}
+
+const { months } = Astro.props;
+
+const MONTH_LABELS = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
+const MONTH_NAMES = [
+	"January", "February", "March", "April", "May", "June",
+	"July", "August", "September", "October", "November", "December",
+];
+
+const years = [...new Set(months.map((month) => month.year))].sort();
+const busiest = Math.max(1, ...months.map((month) => month.count));
+
+/** Four buckets. A printed ramp with more steps is one nobody can read off a key. */
+function heat(count: number): 0 | 1 | 2 | 3 {
+	if (count === 0) return 0;
+	if (count >= busiest) return 3;
+	return count / busiest > 0.5 ? 2 : 1;
+}
+
+/** Only the steps the data actually reaches — a key for an unused step is a lie. */
+const levels = [...new Set(months.map((month) => heat(month.count)))].sort();
+
+const at = (year: number, monthOfYear: number) =>
+	months.find((month) => month.year === year && month.monthOfYear === monthOfYear);
+---
+
+<figure class="heatmap stack flow-space-xs">
+	<div class="heatmap__grid" aria-hidden="true">
+		<span class="heatmap__corner"></span>
+		{MONTH_LABELS.map((label) => <span class="heatmap__month">{label}</span>)}
+
+		{
+			years.map((year) => (
+				<>
+					<span class="heatmap__year">{year}</span>
+					{MONTH_LABELS.map((_, index) => {
+						const month = at(year, index + 1);
+						return (
+							<span
+								class="heatmap__cell"
+								data-heat={month ? heat(month.count) : 0}
+								data-outside={month ? undefined : "true"}
+							/>
+						);
+					})}
+				</>
+			))
+		}
+	</div>
+
+	<figcaption class="heatmap__key cluster">
+		<span>Releases per month</span>
+		<span class="heatmap__scale" aria-hidden="true">
+			{levels.map((level) => <span class="heatmap__cell" data-heat={level} />)}
+		</span>
+		<span>none → {busiest}</span>
+	</figcaption>
+
+	{/* Wrapped rather than hidden directly: auto table layout treats `width` as
+	    a minimum and expands past it, so `.visually-hidden` on a <table> leaves
+	    a full-width table on the page. The wrapper is what does the clipping. */}
+	<div class="visually-hidden">
+		<table>
+			<caption>Releases per month, {years[0]} to {years.at(-1)}</caption>
+			<thead>
+				<tr>
+					<th scope="col">Year</th>
+					{MONTH_NAMES.map((name) => <th scope="col">{name}</th>)}
+				</tr>
+			</thead>
+			<tbody>
+				{
+					years.map((year) => (
+						<tr>
+							<th scope="row">{year}</th>
+							{MONTH_NAMES.map((_, index) => {
+								const month = at(year, index + 1);
+								return <td>{month ? month.count : "—"}</td>;
+							})}
+						</tr>
+					))
+				}
+				</tbody>
+		</table>
+	</div>
+</figure>

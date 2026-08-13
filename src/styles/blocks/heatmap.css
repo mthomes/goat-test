@@ -1,0 +1,58 @@
+/* A calendar of release frequency, drawn as a grid. Cells are square and
+ * share the row so the whole thing shrinks with the column rather than
+ * scrolling sideways. */
+@layer block {
+	.heatmap__grid {
+		display: grid;
+		grid-template-columns: auto repeat(12, minmax(0, 1fr));
+		gap: var(--space-3xs);
+		align-items: center;
+		max-inline-size: var(--measure);
+	}
+
+	.heatmap__month,
+	.heatmap__year {
+		color: var(--colour-ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		font-variant-numeric: tabular-nums;
+		text-align: center;
+	}
+
+	.heatmap__year {
+		padding-inline-end: var(--space-2xs);
+		text-align: end;
+	}
+
+	.heatmap__cell {
+		display: block;
+		aspect-ratio: 1;
+		border: var(--rule-hairline) solid var(--colour-rule);
+		background-color: var(--heat, var(--heat-0));
+	}
+
+	/* Months outside the span are ruled but not filled — the record simply
+	 * does not extend there, which is different from a quiet month. */
+	.heatmap__cell[data-outside] {
+		border-style: dotted;
+		background-color: transparent;
+	}
+
+	.heatmap__key {
+		--cluster-gap: var(--space-2xs);
+
+		color: var(--colour-ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+	}
+
+	.heatmap__scale {
+		display: inline-grid;
+		grid-auto-flow: column;
+		gap: var(--space-3xs);
+	}
+
+	.heatmap__scale .heatmap__cell {
+		inline-size: var(--space-s);
+	}
+}
