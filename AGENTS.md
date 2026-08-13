@@ -25,6 +25,13 @@ however well it reads.
    value in every other layer resolves through a custom property.
 5. **Dark mode via `prefers-color-scheme` only.** No toggle, no persistence,
    no flash of the wrong theme. Only token *values* change; token names never do.
+6. **No `!important`, anywhere.** The layer order is the conflict-resolution
+   mechanism; an `!important` says the order is wrong.
+7. **Motion is opt-in.** A `transition` or `animation` may only be declared
+   inside `@media (prefers-reduced-motion: no-preference)`. The reduced-motion
+   reset everyone copies neutralises motion with `!important`, which rule 6
+   forbids — so this project never declares the motion in the first place. The
+   guard in `reset.css` stays as a backstop, not as the mechanism.
 
 ## The layers
 

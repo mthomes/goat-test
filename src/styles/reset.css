@@ -1,4 +1,123 @@
-/* CUBE: the global tier. A minimal reset plus element-level defaults.
- * Authored in #13 (reset) and #16 (typography). */
+/* =========================================================================
+ * CUBE: reset — the global tier
+ * =========================================================================
+ *
+ * A minimal, modern reset. It sits in the *first* layer in the order, which
+ * is what lets every later layer override it on a bare element selector
+ * without a single specificity trick.
+ *
+ * Element-level typography (#16) lands in this same layer, in
+ * `typography.css` — CUBE's global tier is reset plus defaults, and splitting
+ * them across layers would put a heading's size and a heading's margin on
+ * opposite sides of the cascade for no reason.
+ * ========================================================================= */
+
 @layer reset {
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
+	/* Vertical rhythm is `.stack`'s job, not the browser's. Every margin here
+	 * is one the composition layer would otherwise have to fight. */
+	body,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	p,
+	figure,
+	blockquote,
+	dl,
+	dd,
+	ol,
+	ul,
+	pre {
+		margin: 0;
+	}
+
+	ol[role="list"],
+	ul[role="list"] {
+		padding-inline-start: 0;
+		list-style: none;
+	}
+
+	html {
+		-webkit-text-size-adjust: none;
+		text-size-adjust: none;
+	}
+
+	body {
+		min-block-size: 100vh;
+	}
+
+	img,
+	picture,
+	video,
+	canvas,
+	svg {
+		display: block;
+		max-inline-size: 100%;
+		block-size: auto;
+	}
+
+	input,
+	button,
+	textarea,
+	select {
+		font: inherit;
+		color: inherit;
+	}
+
+	/* Long words and URLs shouldn't be able to push a column wider than its
+	 * measure. */
+	p,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		overflow-wrap: break-word;
+	}
+
+	:target {
+		scroll-margin-block-start: var(--space-l);
+	}
+
+	/* Keyboard focus has to be obvious against cream *and* against the dark
+	 * carbon palette, so it is drawn in the accent with a paper-coloured
+	 * offset ring — visible on any ground either palette can produce. */
+	:focus-visible {
+		outline: var(--rule-medium) solid var(--colour-accent);
+		outline-offset: var(--rule-medium);
+	}
+
+	:focus:not(:focus-visible) {
+		outline: none;
+	}
+
+	/* Required even though the site ships no JavaScript — CSS transitions and
+	 * scroll behaviour still count as motion.
+	 *
+	 * The reset that everyone copies does this with `!important`, which this
+	 * project forbids outright (#18, #36, #49). So motion is inverted rather
+	 * than overridden: nothing anywhere in the codebase may declare a
+	 * transition or animation except inside
+	 * `@media (prefers-reduced-motion: no-preference)`, which makes motion
+	 * opt-in and leaves nothing for the guard below to fight. The guard stays
+	 * as a backstop for anything that arrives from outside these layers. */
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms;
+			animation-iteration-count: 1;
+			transition-duration: 0.01ms;
+			scroll-behavior: auto;
+		}
+	}
 }
