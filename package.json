@@ -14,7 +14,8 @@
     "lint:style-blocks": "node scripts/lint-style-blocks.mjs"
   },
   "dependencies": {
-    "astro": "^7.2.1"
+    "astro": "^7.2.1",
+    "zod": "^4.4.3"
   },
   "private": true,
   "description": "Release notes for a person.",
