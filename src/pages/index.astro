@@ -1,22 +1,20 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { buildKnownIssues, openKnownIssues } from "../lib/known-issues.ts";
 import { SITE } from "../lib/site.ts";
 
-// Placeholder listing that proves collection types flow through to templates.
-// The real home page arrives with #27.
-const releases = await getCollection("releases");
+// Placeholder. The real home page arrives with #27; this exists so the
+// content model is exercised at build time — which is what makes the
+// known-issue lifecycle's failure modes break the build rather than warn.
+const releases = (await getCollection("releases")).map((entry) => entry.data);
+const knownIssues = buildKnownIssues(releases);
+const open = openKnownIssues(knownIssues);
 ---
 
 <BaseLayout title={SITE.name} description={SITE.description}>
-	<h1>{SITE.name}</h1>
-	<ul>
-		{
-			releases.map((release) => (
-				<li>
-					{release.data.version} — {release.data.changes.length} changes
-				</li>
-			))
-		}
-	</ul>
+	<div class="wrapper region stack">
+		<h1>{SITE.name}</h1>
+		<p>{open.length} open known issues across {releases.length} releases.</p>
+	</div>
 </BaseLayout>
