@@ -1,15 +1,26 @@
 ---
 /**
  * The single layout every page renders through, and the single place
- * `src/styles/index.css` is imported. Fleshed out in #10.
+ * `src/styles/index.css` is imported.
+ *
+ * Open Graph, canonical URLs and structured data are deliberately absent —
+ * they arrive together in #35 so that ticket is reviewable on its own.
  */
+import { SITE } from "../lib/site.ts";
 import "../styles/index.css";
 
 interface Props {
+	/** The page's own name. The site name is appended here, not by the caller. */
 	title: string;
+	/** Required: every route needs one, and #35 reads them for social cards. */
+	description: string;
 }
 
-const { title } = Astro.props;
+const { title, description } = Astro.props;
+
+// `Page · HUMAN/1`, except on the page that *is* the site, which would
+// otherwise read `HUMAN/1 · HUMAN/1`.
+const documentTitle = title === SITE.name ? `${SITE.name} · ${SITE.tagline}` : `${title} · ${SITE.name}`;
 ---
 
 <!doctype html>
@@ -17,9 +28,27 @@ const { title } = Astro.props;
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>{title}</title>
+		<meta name="description" content={description} />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<meta name="theme-color" content={SITE.themeColour} />
+		<title>{documentTitle}</title>
 	</head>
 	<body>
-		<slot />
+		<a class="skip-link" href="#main">Skip to content</a>
+
+		<header>
+			<p>{SITE.name}</p>
+		</header>
+
+		<!-- tabindex="-1" so the skip link actually moves focus here, rather
+		     than only moving the scroll position. -->
+		<main id="main" tabindex="-1">
+			<slot />
+		</main>
+
+		<footer>
+			<p>{SITE.name} — {SITE.tagline}</p>
+		</footer>
 	</body>
 </html>
