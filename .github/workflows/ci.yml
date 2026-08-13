@@ -41,6 +41,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Guardrails
+        run: npx vitest run --config vitest.guardrails.config.ts
+
       # Prints the issue -> covering tests table to the job summary. It is
       # non-blocking here; #51 turns it into a gate once the suite exists.
       - name: Requirement traceability

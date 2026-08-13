@@ -9,6 +9,16 @@ export default defineConfig({
 	// it and #39 wires the deploy.
 	site: "https://mthomes.github.io/goat-test",
 
+	vite: {
+		build: {
+			// Lightning CSS drops the `@layer …;` statement when it can prove the
+			// blocks already appear in that order. Sound, but it deletes the one
+			// line that makes the order explicit rather than emergent — reorder
+			// an import and the cascade changes silently. esbuild keeps it.
+			cssMinify: "esbuild",
+		},
+	},
+
 	build: {
 		// One stylesheet, always external. Astro's `auto` mode inlines small
 		// sheets into every page, which would scatter the cascade across the

@@ -17,7 +17,8 @@
     "test:e2e": "playwright test",
     "trace": "node scripts/trace.mjs",
     "trace:sync": "node scripts/sync-requirements.mjs",
-    "validate:feed": "node scripts/validate-feed.mjs"
+    "validate:feed": "node scripts/validate-feed.mjs",
+    "test:guardrails": "npm run build && vitest run --config vitest.guardrails.config.ts"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
