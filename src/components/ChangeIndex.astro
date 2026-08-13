@@ -1,0 +1,41 @@
+---
+/**
+ * Block: change-index. A flat list of changes lifted out of their releases —
+ * the view a tag page or a change-type page is.
+ *
+ * Reuses `.change-entry` so a change carries the same sigil here as it does on
+ * its own release page. A reader should not have to learn two vocabularies.
+ */
+import { formatDate, isoDate, routes } from "../lib/format.ts";
+import type { ChangeInRelease } from "../lib/queries.ts";
+import TagList from "./TagList.astro";
+
+interface Props {
+	changes: readonly ChangeInRelease[];
+	label: string;
+	/** Hide the tag list where every entry carries the same tag anyway. */
+	showTags?: boolean;
+}
+
+const { changes, label, showTags = true } = Astro.props;
+---
+
+<ul class="change-index stack" role="list" aria-label={label}>
+	{
+		changes.map((change) => (
+			<li class="change-entry stack flow-space-3xs" data-change-type={change.type}>
+				<p class="change-entry__text">{change.text}</p>
+
+				<p class="change-index__release cluster">
+					<a href={routes.release(change.release.version)}>v{change.release.version}</a>
+					<span aria-hidden="true">·</span>
+					<time datetime={isoDate(change.release.released)}>
+						{formatDate(change.release.released)}
+					</time>
+				</p>
+
+				{showTags && <TagList tags={change.tags} label="Tags for this change" />}
+			</li>
+		))
+	}
+</ul>

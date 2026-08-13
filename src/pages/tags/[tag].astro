@@ -1,0 +1,53 @@
+---
+/**
+ * Every change ever made in one area of life.
+ *
+ * This is the payoff for a structured content model — impossible with
+ * prose-only posts, and free once the query layer exists.
+ */
+import type { GetStaticPaths } from "astro";
+
+import ChangeIndex from "../../components/ChangeIndex.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { pluralise, routes } from "../../lib/format.ts";
+import { getAllTags, getChangesByTag, type ChangeInRelease } from "../../lib/queries.ts";
+
+export const getStaticPaths = (async () => {
+	const tags = await getAllTags();
+
+	return Promise.all(
+		tags.map(async (tag) => ({
+			params: { tag: tag.slug },
+			props: { tag: tag.tag, changes: await getChangesByTag(tag.tag) },
+		})),
+	);
+}) satisfies GetStaticPaths;
+
+interface Props {
+	tag: string;
+	changes: readonly ChangeInRelease[];
+}
+
+const { tag, changes } = Astro.props;
+const releases = new Set(changes.map((change) => change.release.version));
+---
+
+<BaseLayout
+	title={`Tag: ${tag}`}
+	description={`${pluralise(changes.length, "change")} tagged ${tag}, across ${pluralise(releases.size, "release")}.`}
+>
+	<div class="wrapper region stack">
+		<header class="stack flow-space-2xs">
+			<h1 class="tag-page__title">{tag}</h1>
+			<p class="archive__count">
+				{pluralise(changes.length, "change")} across {pluralise(releases.size, "release")}, newest first
+			</p>
+		</header>
+
+		<ChangeIndex changes={changes} label={`Changes tagged ${tag}`} />
+
+		<p class="archive__count">
+			<a href={routes.tags()}>← All tags</a>
+		</p>
+	</div>
+</BaseLayout>

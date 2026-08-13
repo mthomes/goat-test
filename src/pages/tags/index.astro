@@ -1,0 +1,40 @@
+---
+/** Every tag in use, ordered by how often it is used. */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { pluralise, routes } from "../../lib/format.ts";
+import { getAllTags } from "../../lib/queries.ts";
+
+const tags = await getAllTags();
+const total = tags.reduce((sum, tag) => sum + tag.count, 0);
+---
+
+<BaseLayout
+	title="Tags"
+	description={`Every area of life this record touches: ${tags.length} tags across ${total} changes.`}
+>
+	<div class="wrapper region stack">
+		<header class="stack flow-space-2xs">
+			<h1>Tags</h1>
+			<p class="archive__count">
+				{pluralise(tags.length, "tag")} across {pluralise(total, "tagged change")}, most used first
+			</p>
+		</header>
+
+		{
+			tags.length === 0 ? (
+				<p class="archive__empty">Nothing is tagged yet.</p>
+			) : (
+				<ol class="tag-index stack flow-space-3xs" role="list">
+					{tags.map((tag) => (
+						<li class="tag-index__row repel">
+							<a class="tag-index__tag" href={routes.tag(tag.slug)}>
+								{tag.tag}
+							</a>
+							<span class="tag-index__count">{tag.count}</span>
+						</li>
+					))}
+				</ol>
+			)
+		}
+	</div>
+</BaseLayout>
