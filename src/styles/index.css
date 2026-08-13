@@ -26,6 +26,7 @@
 @layer reset, tokens, composition, utility, block, exception;
 
 @import "./reset.css";
+@import "./typography.css";
 @import "./tokens.css";
 @import "./composition.css";
 @import "./utility.css";

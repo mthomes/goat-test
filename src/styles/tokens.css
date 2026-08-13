@@ -111,8 +111,16 @@
 		 * puts them at the front of these stacks; until then they resolve to
 		 * the platform's own.
 		 */
-		--font-serif: charter, ui-serif, georgia, "times new roman", serif;
-		--font-mono: "ibm plex mono", ui-monospace, sfmono-regular, menlo, consolas, monospace;
+		--font-serif: "Charis SIL", charter, ui-serif, georgia, "times new roman", serif;
+		--font-mono: "IBM Plex Mono", ui-monospace, sfmono-regular, menlo, consolas, monospace;
+
+		/* ------------------------------------------------------- leading --
+		 * Body leading is generous because the measure is long; headings are
+		 * noticeably tighter, which is most of what makes them read as
+		 * headings rather than as large paragraphs. */
+		--leading-body: 1.6;
+		--leading-heading: 1.08;
+		--leading-flat: 1;
 
 		/* --------------------------------------------- weight and tracking --
 		 * Two weights, because a manual set on a laser printer had two. The
@@ -122,6 +130,7 @@
 		--font-weight-bold: 700;
 		--tracking-label: 0.09em;
 		--tracking-tight: -0.01em;
+		--underline-offset: 0.15em;
 
 		/* ------------------------------------------------------- measure --
 		 * Line length. 66 characters for prose, tighter for standfirsts and
@@ -151,5 +160,30 @@
 		--rule-heavy: 3px;
 		--border-width: var(--rule-hairline);
 		--border-width-thick: var(--rule-medium);
+
+		/* The reusable rule treatment. A block writes
+		 * `border-block-end: var(--rule-line)` and gets the project's hairline
+		 * without needing to know what a hairline is this week. */
+		--rule-line: var(--rule-hairline) solid var(--colour-rule);
+		--rule-line-strong: var(--rule-medium) solid var(--colour-rule-strong);
+		--rule-line-heavy: var(--rule-heavy) solid var(--colour-ink);
+
+		/* ---------------------------------------------------------- sigils --
+		 *
+		 * Change types are marked with a typographic sigil, never a coloured
+		 * pill: a printed manual had one ink for the body and marked its
+		 * errata with the marks already in the case. Dagger and double-dagger
+		 * are the footnote marks, which is exactly what a deprecation and a
+		 * known issue are.
+		 *
+		 * Every glyph here is inside the latin subset the site ships, so none
+		 * of them falls back to a system face mid-line.
+		 */
+		--sigil-added: "+";
+		--sigil-fixed: "*";
+		--sigil-changed: "~";
+		--sigil-removed: "\2212";
+		--sigil-deprecated: "\2020";
+		--sigil-known-issue: "\2021";
 	}
 }
