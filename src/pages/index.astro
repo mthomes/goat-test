@@ -1,20 +1,50 @@
 ---
+import ChangeList from "../components/ChangeList.astro";
+import KnownIssueItem from "../components/KnownIssueItem.astro";
+import MetadataTable from "../components/MetadataTable.astro";
+import ReleaseCard from "../components/ReleaseCard.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getAllReleases, getKnownIssues, getStats } from "../lib/queries.ts";
+import { formatDate, isoDate, pluralise, releaseTypeLabel, routes } from "../lib/format.ts";
+import { getAllReleases, getKnownIssues } from "../lib/queries.ts";
 import { SITE } from "../lib/site.ts";
 
-// Placeholder. The real home page arrives with #27.
+// Placeholder composed from the blocks in #24. The real home page arrives
+// with #27, and the release pages these link to arrive with #25.
 const releases = await getAllReleases();
-const { open } = await getKnownIssues();
-const stats = await getStats();
+const { all: knownIssues, open } = await getKnownIssues();
+const latest = releases[0];
+
+const openedIn = Object.fromEntries(
+	knownIssues.map((issue) => [
+		issue.id,
+		{ version: issue.openedIn, href: routes.release(issue.openedIn) },
+	]),
+);
 ---
 
 <BaseLayout title={SITE.name} description={SITE.description}>
 	<div class="wrapper region stack">
 		<h1>{SITE.name}</h1>
-		<p>
-			{stats.totalReleases} releases, {stats.totalChanges} changes, {open.length} still
-			broken. Latest: {releases[0].version}.
-		</p>
+
+		<MetadataTable
+			label="Release metadata"
+			rows={[
+				{ label: "Released", value: formatDate(latest.released), datetime: isoDate(latest.released) },
+				{ label: "Type", value: releaseTypeLabel(latest.releaseType) },
+				{ label: "Changes", value: pluralise(latest.changes.length, "entry", "entries") },
+			]}
+		/>
+
+		<ChangeList groups={latest.changesByType} openedIn={openedIn} />
+
+		<h2>Recent releases</h2>
+		<div class="stack">
+			{releases.slice(1, 5).map((release) => <ReleaseCard release={release} />)}
+		</div>
+
+		<h2>Known issues</h2>
+		<div class="stack">
+			{open.map((issue) => <KnownIssueItem issue={issue} />)}
+		</div>
 	</div>
 </BaseLayout>

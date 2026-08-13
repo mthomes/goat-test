@@ -1,0 +1,28 @@
+/* Inline tag links. Set in the mono, because a tag is metadata. */
+@layer block {
+	.tag-list {
+		--cluster-gap: var(--space-3xs) var(--space-2xs);
+
+		padding-inline-start: 0;
+		list-style: none;
+	}
+
+	.tag-list__tag {
+		color: var(--colour-ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		letter-spacing: var(--tracking-label);
+		text-decoration-color: var(--colour-rule);
+	}
+
+	.tag-list__tag::before {
+		content: "/";
+		padding-inline-end: var(--space-3xs);
+		color: var(--colour-rule-strong);
+	}
+
+	.tag-list__tag:hover,
+	.tag-list__tag:focus-visible {
+		color: var(--colour-accent);
+	}
+}

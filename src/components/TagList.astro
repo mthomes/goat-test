@@ -1,0 +1,26 @@
+---
+/** Block: tag-list. Inline tag links, wrapping. */
+import { routes } from "../lib/format.ts";
+
+interface Props {
+	tags: readonly string[];
+	/** Accessible name for the list, since a page may carry several. */
+	label?: string;
+}
+
+const { tags, label = "Tags" } = Astro.props;
+---
+
+{
+	tags.length > 0 && (
+		<ul class="tag-list cluster" role="list" aria-label={label}>
+			{tags.map((tag) => (
+				<li>
+					<a class="tag-list__tag" href={routes.tag(tag)}>
+						{tag}
+					</a>
+				</li>
+			))}
+		</ul>
+	)
+}

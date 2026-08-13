@@ -1,0 +1,50 @@
+/* Changes grouped by type under small-caps labels, each entry marked with a
+ * hanging sigil. The block owns the gutter and prints whatever `--sigil` the
+ * exception layer put there; it never decides which mark that is. */
+@layer block {
+	.change-list__label {
+		max-inline-size: none;
+		color: var(--colour-ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		font-variant-caps: all-small-caps;
+		font-weight: var(--font-weight-regular);
+		letter-spacing: var(--tracking-label);
+	}
+
+	.change-list__entries {
+		padding-inline-start: 0;
+		list-style: none;
+	}
+
+	.change-entry {
+		position: relative;
+		padding-inline-start: var(--sigil-gutter, var(--space-l));
+	}
+
+	/* A hanging mark in the margin, the way a printed errata sheet sets one.
+	 * `--sigil` is empty until the exception layer supplies it, so an entry
+	 * with no recognised type simply prints without a mark rather than
+	 * printing a wrong one. */
+	.change-entry::before {
+		content: var(--sigil, "");
+		position: absolute;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		color: var(--colour-accent);
+		font-family: var(--font-mono);
+		font-size: var(--step-0);
+		line-height: var(--leading-body);
+	}
+
+	.change-entry__text {
+		max-inline-size: var(--measure);
+	}
+
+	.change-entry__resolves {
+		max-inline-size: none;
+		color: var(--colour-ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+	}
+}

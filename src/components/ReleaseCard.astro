@@ -1,0 +1,36 @@
+---
+/**
+ * Block: release-card. Version, date, release type, summary, change count.
+ *
+ * The rule it draws above itself is weighted by release type, from the
+ * exception layer — a major has to read as a larger event before the reader
+ * has read a word.
+ */
+import { formatDate, isoDate, pluralise, releaseTypeLabel, routes } from "../lib/format.ts";
+import type { Release } from "../lib/queries.ts";
+
+interface Props {
+	release: Release;
+	headingLevel?: 2 | 3;
+}
+
+const { release, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as "h3";
+---
+
+<article class="release-card stack flow-space-xs" data-release-type={release.releaseType}>
+	<div class="release-card__head repel">
+		<Heading class="release-card__version">
+			<a href={routes.release(release.version)}>v{release.version}</a>
+		</Heading>
+		<p class="release-card__type">{releaseTypeLabel(release.releaseType)}</p>
+	</div>
+
+	<p class="release-card__meta cluster">
+		<time datetime={isoDate(release.released)}>{formatDate(release.released)}</time>
+		<span aria-hidden="true">·</span>
+		<span>{pluralise(release.changes.length, "change")}</span>
+	</p>
+
+	{release.summary && <p class="release-card__summary">{release.summary}</p>}
+</article>

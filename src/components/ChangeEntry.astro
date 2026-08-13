@@ -1,0 +1,37 @@
+---
+/**
+ * Block: change-entry. One line of a changelog — sigil, text, tags.
+ *
+ * The sigil is printed by the block into a hanging gutter; *which* sigil is
+ * decided by the exception layer from `data-change-type`.
+ */
+import type { Change } from "../lib/queries.ts";
+import TagList from "./TagList.astro";
+
+interface Props {
+	change: Change;
+	/** Where an entry resolving a known issue links back to. */
+	resolvesHref?: { version: string; href: string }[];
+}
+
+const { change, resolvesHref = [] } = Astro.props;
+---
+
+<li class="change-entry stack flow-space-3xs" data-change-type={change.type}>
+	<p class="change-entry__text">{change.text}</p>
+
+	{
+		resolvesHref.length > 0 && (
+			<p class="change-entry__resolves">
+				{resolvesHref.map((target, index) => (
+					<>
+						{index > 0 && ", "}
+						<a href={target.href}>opened in {target.version}</a>
+					</>
+				))}
+			</p>
+		)
+	}
+
+	<TagList tags={change.tags} label={`Tags for this ${change.type} entry`} />
+</li>

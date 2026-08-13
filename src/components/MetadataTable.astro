@@ -1,0 +1,33 @@
+---
+/**
+ * Block: metadata-table. The monospace RELEASED / TYPE / CHANGES block from
+ * the art direction — a revision table off the front of a manual.
+ */
+interface Row {
+	label: string;
+	/** Rendered as-is when a string; use the slot for markup. */
+	value?: string;
+	/** ISO date, when the value is a date. */
+	datetime?: string;
+}
+
+interface Props {
+	rows: readonly Row[];
+	label?: string;
+}
+
+const { rows, label } = Astro.props;
+---
+
+<dl class="metadata-table" aria-label={label}>
+	{
+		rows.map((row) => (
+			<div class="metadata-table__row">
+				<dt class="metadata-table__label">{row.label}</dt>
+				<dd class="metadata-table__value">
+					{row.datetime ? <time datetime={row.datetime}>{row.value}</time> : row.value}
+				</dd>
+			</div>
+		))
+	}
+</dl>
