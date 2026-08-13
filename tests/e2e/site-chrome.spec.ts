@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { builtCss, layerBody } from "../helpers/built-css.ts";
+
 /** The persistent chrome: a manual's running head and its colophon. */
 test.describe("site chrome", () => {
 	test.beforeEach(async ({ page }) => {
@@ -91,15 +93,11 @@ test.describe("site chrome", () => {
 	});
 
 	test("ships the chrome from the block layer", { tag: ["@issue-11"] }, async ({ page }) => {
-		const inLayer = await page.evaluate(async () => {
-			const href = document.querySelector<HTMLLinkElement>('link[rel="stylesheet"]')!.href;
-			const css = await (await fetch(href)).text();
-			const start = css.indexOf("@layer block{");
-			const end = css.indexOf("@layer ", start + 1);
-			const layer = css.slice(start, end === -1 ? undefined : end);
-			return { header: layer.includes(".site-header"), footer: layer.includes(".site-footer") };
-		});
+		const block = layerBody(await builtCss(page), "block");
 
-		expect(inLayer).toEqual({ header: true, footer: true });
+		expect({
+			header: block.includes(".site-header"),
+			footer: block.includes(".site-footer"),
+		}).toEqual({ header: true, footer: true });
 	});
 });

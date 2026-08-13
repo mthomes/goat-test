@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { builtCss, layerBody } from "../helpers/built-css.ts";
+
 /**
  * The composition primitives, exercised on a scratch page at 320px, 768px and
  * 1440px.
@@ -142,13 +144,8 @@ test.describe("composition primitives across the range", () => {
 
 		// And it happens without a media query — the whole point of the
 		// technique. No `@media` appears anywhere in the composition layer.
-		const composition = await page.evaluate(async () => {
-			const href = document.querySelector<HTMLLinkElement>('link[rel="stylesheet"]')!.href;
-			const css = await (await fetch(href)).text();
-			const start = css.indexOf("@layer composition{");
-			const next = css.indexOf("@layer ", start + 1);
-			return css.slice(start, next === -1 ? undefined : next);
-		});
+		const composition = layerBody(await builtCss(page), "composition");
+		expect(composition.length).toBeGreaterThan(500);
 		expect(composition).not.toContain("@media");
 	});
 

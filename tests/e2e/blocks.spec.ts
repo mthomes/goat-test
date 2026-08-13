@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { builtCss, layerBody } from "../helpers/built-css.ts";
+
 /**
  * The blocks as rendered. The unit suite checks the conventions; this checks
  * that the parts the ticket names actually appear on a page, with the
@@ -112,16 +114,9 @@ test.describe("core content blocks", () => {
 	});
 
 	test("ships one stylesheet, and every block rule lives in @layer block", { tag: ["@issue-24"] }, async ({ page }) => {
-		const inLayer = await page.evaluate(async () => {
-			const href = document.querySelector<HTMLLinkElement>('link[rel="stylesheet"]')!.href;
-			const css = await (await fetch(href)).text();
-			const start = css.indexOf("@layer block{");
-			const end = css.indexOf("@layer ", start + 1);
-			const layer = css.slice(start, end === -1 ? undefined : end);
-
-			return [".release-card", ".change-entry", ".metadata-table", ".tag-list", ".known-issue"]
-				.map((selector) => ({ selector, present: layer.includes(selector) }));
-		});
+		const block = layerBody(await builtCss(page), "block");
+		const inLayer = [".release-card", ".change-entry", ".metadata-table", ".tag-list", ".known-issue"]
+			.map((selector) => ({ selector, present: block.includes(selector) }));
 
 		for (const { selector, present } of inLayer) {
 			expect(present, `${selector} is not inside @layer block`).toBe(true);
