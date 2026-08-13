@@ -20,9 +20,9 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           # Pinned to the local version. .nvmrc is the single source of truth
           # so CI and a developer's shell cannot drift apart.
