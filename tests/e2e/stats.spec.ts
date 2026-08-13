@@ -30,7 +30,7 @@ async function figures(page: import("@playwright/test").Page, section: string) {
 
 test.describe("stats dashboard", () => {
 	test("totals releases and splits them by type", { tag: ["@issue-32"] }, async ({ page }) => {
-		await page.goto("/stats");
+		await page.goto("stats");
 		const stats = await figures(page, "releases");
 
 		const total = Number.parseInt(stats.Total, 10);
@@ -42,7 +42,7 @@ test.describe("stats dashboard", () => {
 		expect(major).toBe(4);
 
 		// Cross-checked against the archive, which counts them independently.
-		await page.goto("/releases");
+		await page.goto("releases");
 		const archive = Number.parseInt(
 			/(\d+) releases/.exec(await page.locator(".archive__count").first().innerText())![1],
 			10,
@@ -51,7 +51,7 @@ test.describe("stats dashboard", () => {
 	});
 
 	test("totals changes by type, cross-checked against /changes", { tag: ["@issue-32"] }, async ({ page }) => {
-		await page.goto("/changes");
+		await page.goto("changes");
 		const byType = Object.fromEntries(
 			await page.locator(".tag-index__row").evaluateAll((rows) =>
 				rows.map((row) => [
@@ -61,7 +61,7 @@ test.describe("stats dashboard", () => {
 			),
 		) as Record<string, number>;
 
-		await page.goto("/stats");
+		await page.goto("stats");
 		const stats = await figures(page, "changes");
 
 		for (const [label, count] of Object.entries(byType)) {
@@ -72,7 +72,7 @@ test.describe("stats dashboard", () => {
 	});
 
 	test("ranks the most-patched tags, cross-checked against /tags", { tag: ["@issue-32"] }, async ({ page }) => {
-		await page.goto("/tags");
+		await page.goto("tags");
 		const onTags = await page.locator(".tag-index__row").evaluateAll((rows) =>
 			rows.map((row) => ({
 				tag: row.querySelector("a")!.textContent!.trim(),
@@ -80,7 +80,7 @@ test.describe("stats dashboard", () => {
 			})),
 		);
 
-		await page.goto("/stats");
+		await page.goto("stats");
 		const onStats = await page.locator(".stats__rank").evaluateAll((cells) =>
 			cells.map((cell) => ({
 				position: Number.parseInt(cell.querySelector(".stats__position")!.textContent!, 10),
@@ -95,20 +95,20 @@ test.describe("stats dashboard", () => {
 	});
 
 	test("names the longest-open known issue with its age", { tag: ["@issue-32"] }, async ({ page }) => {
-		await page.goto("/stats");
+		await page.goto("stats");
 		const stats = await figures(page, "issues");
 
 		expect(stats["Longest open"]).toMatch(/^\d+ releases?, since v\d+\.\d+\.\d+$/);
 		const [, age, version] = /^(\d+) releases?, since (v[\d.]+)/.exec(stats["Longest open"])!;
 
-		await page.goto("/known-issues");
+		await page.goto("known-issues");
 		const top = page.locator('.known-issue[data-state="open"]').first();
 		await expect(top.locator(".known-issue__span")).toContainText(`open for ${age} release`);
 		await expect(top.locator(".known-issue__span")).toContainText(`Opened in ${version}`);
 	});
 
 	test("gives the ratio of things fixed to things still broken", { tag: ["@issue-32"] }, async ({ page }) => {
-		await page.goto("/stats");
+		await page.goto("stats");
 		const stats = await figures(page, "issues");
 
 		const resolved = Number.parseInt(stats.Resolved, 10);
@@ -120,7 +120,7 @@ test.describe("stats dashboard", () => {
 	});
 
 	test("reports average and longest gap between releases", { tag: ["@issue-32"] }, async ({ page }) => {
-		await page.goto("/stats");
+		await page.goto("stats");
 		const stats = await figures(page, "cadence");
 
 		const average = Number.parseFloat(stats["Average gap"]);
@@ -133,7 +133,7 @@ test.describe("stats dashboard", () => {
 		// Recomputed from the two release pages either side of the gap.
 		const [, from, to] = /^v([\d.]+) → v([\d.]+)$/.exec(stats["Longest gap between"])!;
 		const dateOf = async (version: string) => {
-			await page.goto(`/releases/${version}`);
+			await page.goto(`releases/${version}`);
 			return Date.parse((await page.locator(".metadata-table time").getAttribute("datetime"))!);
 		};
 		const days = ((await dateOf(to)) - (await dateOf(from))) / 86_400_000;
@@ -141,7 +141,7 @@ test.describe("stats dashboard", () => {
 	});
 
 	test("is typeset as a table, with no chart chrome", { tag: ["@issue-32"] }, async ({ page }) => {
-		await page.goto("/stats");
+		await page.goto("stats");
 
 		// Definition lists and ordered lists, not canvases or SVG plots.
 		await expect(page.locator("main canvas")).toHaveCount(0);

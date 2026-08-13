@@ -48,15 +48,32 @@ export function changeTypeLabel(type: ChangeType): string {
 	return CHANGE_TYPE_LABELS[type];
 }
 
-/** `/releases/31.0.0` and friends, in one place so no template guesses. */
+/**
+ * The site is published from a subdirectory, so every internal URL has to
+ * carry that prefix. Astro exposes it as `BASE_URL`, always with a trailing
+ * slash; it is trimmed here so the builders below read as plain paths.
+ *
+ * This is the only place the base is applied. Getting it wrong in one template
+ * is the classic way a project-Pages deploy ships a page of dead links.
+ */
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+/** Prefix a root-relative path with the site's base. */
+export function withBase(path: string): string {
+	return path === "/" ? `${BASE}/` : `${BASE}${path}`;
+}
+
+/** `/goat-test/releases/31.0.0` and friends, in one place so no template guesses. */
 export const routes = {
-	home: () => "/",
-	releases: () => "/releases",
-	release: (version: string) => `/releases/${version}`,
-	tags: () => "/tags",
-	tag: (slug: string) => `/tags/${slug}`,
-	changes: () => "/changes",
-	changeType: (type: ChangeType) => `/changes/${type}`,
-	knownIssues: () => "/known-issues",
-	stats: () => "/stats",
+	home: () => withBase("/"),
+	releases: () => withBase("/releases"),
+	release: (version: string) => withBase(`/releases/${version}`),
+	tags: () => withBase("/tags"),
+	tag: (slug: string) => withBase(`/tags/${slug}`),
+	changes: () => withBase("/changes"),
+	changeType: (type: ChangeType) => withBase(`/changes/${type}`),
+	knownIssues: () => withBase("/known-issues"),
+	stats: () => withBase("/stats"),
+	rss: () => withBase("/rss.xml"),
+	asset: (path: string) => withBase(path),
 } as const;

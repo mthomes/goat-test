@@ -262,6 +262,41 @@ describe("@issue-49 source-level constraints", () => {
 		}
 	});
 
+	it("prefixes every asset URL in the built CSS with the configured base", () => {
+		// CSS cannot read `import.meta.env.BASE_URL`, so the base is written out
+		// in `typography.css`. This is what stops it drifting from the config.
+		const config = readFileSync("astro.config.mjs", "utf8");
+		const base = /base:\s*"([^"]+)"/.exec(config)![1];
+
+		const urls = [...css.matchAll(/url\(([^)]+)\)/g)].map((match) => match[1].replace(/["']/g, ""));
+
+		expect(urls.length).toBeGreaterThan(0);
+		for (const value of urls) {
+			if (!value.startsWith("/")) continue;
+			expect(value, `${value} does not carry the base`).toMatch(new RegExp(`^${base}/`));
+		}
+
+		// And the files those URLs name are actually in the build.
+		for (const value of urls.filter((entry) => entry.startsWith("/"))) {
+			const path = join(DIST, value.slice(base.length));
+			expect(built, `${value} is not in the build output`).toContain(path);
+		}
+	});
+
+	it("prefixes every root-relative link in built HTML with the base", () => {
+		const config = readFileSync("astro.config.mjs", "utf8");
+		const base = /base:\s*"([^"]+)"/.exec(config)![1];
+
+		for (const path of htmlFiles) {
+			const html = readFileSync(path, "utf8");
+			const links = [...html.matchAll(/(?:href|src)="(\/[^"]*)"/g)].map((match) => match[1]);
+
+			for (const link of links) {
+				expect(link, `${path} links ${link} without the base`).toMatch(new RegExp(`^${base}/`));
+			}
+		}
+	});
+
 	it("keeps the theme-color meta equal to the paper token in both schemes", () => {
 		// A `theme-color` meta cannot read a custom property, so these are the
 		// only colour values outside the token layer. This is what stops them

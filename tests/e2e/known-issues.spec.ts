@@ -1,9 +1,11 @@
 import { expect, test } from "@playwright/test";
 
+import { url } from "../helpers/routes.ts";
+
 /** The tracker: everything still broken, and everything since fixed. */
 test.describe("known issues tracker", () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto("/known-issues");
+		await page.goto("known-issues");
 	});
 
 	test("lists open issues first, longest-open at the top", { tag: ["@issue-31"] }, async ({ page }) => {
@@ -50,7 +52,7 @@ test.describe("known issues tracker", () => {
 
 		expect(hrefs.length).toBeGreaterThan(0);
 		for (const href of hrefs) {
-			expect(href).toMatch(/^\/releases\/\d+\.\d+\.\d+$/);
+			expect(href).toMatch(/^\/goat-test\/releases\/\d+\.\d+\.\d+$/);
 			expect((await page.request.get(href)).status(), href).toBe(200);
 		}
 	});

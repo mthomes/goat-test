@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { url } from "../helpers/routes.ts";
+
 /**
  * The feed at `/rss.xml`.
  *
@@ -9,7 +11,7 @@ import { expect, test } from "@playwright/test";
  */
 test.describe("RSS feed", () => {
 	test("serves valid, well-formed XML", { tag: ["@issue-34"] }, async ({ page }) => {
-		const response = await page.request.get("/rss.xml");
+		const response = await page.request.get(url("/rss.xml"));
 
 		expect(response.status()).toBe(200);
 		expect(response.headers()["content-type"]).toMatch(/xml/);
@@ -38,7 +40,7 @@ test.describe("RSS feed", () => {
 	});
 
 	test("carries every release, newest first", { tag: ["@issue-34"] }, async ({ page }) => {
-		const xml = await (await page.request.get("/rss.xml")).text();
+		const xml = await (await page.request.get(url("/rss.xml"))).text();
 
 		const items = await page.evaluate((source) => {
 			const doc = new DOMParser().parseFromString(source, "application/xml");
@@ -50,7 +52,7 @@ test.describe("RSS feed", () => {
 		}, xml);
 
 		// Item count matches the release count on the archive.
-		await page.goto("/releases");
+		await page.goto("releases");
 		const total = Number.parseInt(
 			/(\d+) releases/.exec(await page.locator(".archive__count").first().innerText())![1],
 			10,
@@ -63,7 +65,7 @@ test.describe("RSS feed", () => {
 	});
 
 	test("titles include the version and links are absolute", { tag: ["@issue-34"] }, async ({ page }) => {
-		const xml = await (await page.request.get("/rss.xml")).text();
+		const xml = await (await page.request.get(url("/rss.xml"))).text();
 
 		const items = await page.evaluate((source) => {
 			const doc = new DOMParser().parseFromString(source, "application/xml");
@@ -86,7 +88,7 @@ test.describe("RSS feed", () => {
 	});
 
 	test("renders changes as readable HTML, not raw frontmatter", { tag: ["@issue-34"] }, async ({ page }) => {
-		const xml = await (await page.request.get("/rss.xml")).text();
+		const xml = await (await page.request.get(url("/rss.xml"))).text();
 
 		const content = await page.evaluate((source) => {
 			const doc = new DOMParser().parseFromString(source, "application/xml");
@@ -109,12 +111,12 @@ test.describe("RSS feed", () => {
 	});
 
 	test("advertises itself for autodiscovery on every page", { tag: ["@issue-34"] }, async ({ page }) => {
-		for (const path of ["/", "/releases", "/known-issues", "/tags"]) {
+		for (const path of [url("/"), url("/releases"), url("/known-issues"), url("/tags")]) {
 			await page.goto(path);
 
 			const link = page.locator('head link[rel="alternate"][type="application/rss+xml"]');
 			await expect(link, path).toHaveCount(1);
-			await expect(link, path).toHaveAttribute("href", "/rss.xml");
+			await expect(link, path).toHaveAttribute("href", url("/rss.xml"));
 			await expect(link, path).toHaveAttribute("title", /HUMAN\/1/);
 		}
 	});

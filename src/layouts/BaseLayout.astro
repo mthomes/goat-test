@@ -6,8 +6,10 @@
  * Open Graph, canonical URLs and structured data are deliberately absent —
  * they arrive together in #35 so that ticket is reviewable on its own.
  */
+import SeoTags from "../components/SeoTags.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
+import { routes } from "../lib/format.ts";
 import { SITE } from "../lib/site.ts";
 import "../styles/index.css";
 
@@ -16,9 +18,11 @@ interface Props {
 	title: string;
 	/** Required: every route needs one, and #35 reads them for social cards. */
 	description: string;
+	/** Set on release pages, which are Articles rather than pages. */
+	article?: { published: Date };
 }
 
-const { title, description } = Astro.props;
+const { title, description, article } = Astro.props;
 
 // `Page · HUMAN/1`, except on the page that *is* the site, which would
 // otherwise read `HUMAN/1 · HUMAN/1`.
@@ -32,12 +36,12 @@ const documentTitle = title === SITE.name ? `${SITE.name} · ${SITE.tagline}` : 
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content={description} />
 		<meta name="generator" content={Astro.generator} />
-		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="icon" href={routes.asset("/favicon.svg")} type="image/svg+xml" />
 		<link
 			rel="alternate"
 			type="application/rss+xml"
 			title={`${SITE.name} — ${SITE.tagline}`}
-			href="/rss.xml"
+			href={routes.rss()}
 		/>
 		<meta name="theme-color" content={SITE.themeColour.light} media="(prefers-color-scheme: light)" />
 		<meta name="theme-color" content={SITE.themeColour.dark} media="(prefers-color-scheme: dark)" />
@@ -47,19 +51,21 @@ const documentTitle = title === SITE.name ? `${SITE.name} · ${SITE.tagline}` : 
 		    on the ones most pages never use is a bad trade. */}
 		<link
 			rel="preload"
-			href="/fonts/charis-sil-latin-400-normal.woff2"
+			href={routes.asset("/fonts/charis-sil-latin-400-normal.woff2")}
 			as="font"
 			type="font/woff2"
 			crossorigin
 		/>
 		<link
 			rel="preload"
-			href="/fonts/ibm-plex-mono-latin-400-normal.woff2"
+			href={routes.asset("/fonts/ibm-plex-mono-latin-400-normal.woff2")}
 			as="font"
 			type="font/woff2"
 			crossorigin
 		/>
 		<title>{documentTitle}</title>
+
+		<SeoTags title={documentTitle} description={description} article={article} />
 	</head>
 	<body>
 		<a class="skip-link" href="#main">Skip to content</a>

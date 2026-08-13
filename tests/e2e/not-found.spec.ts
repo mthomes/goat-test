@@ -1,12 +1,14 @@
 import { expect, test } from "@playwright/test";
 
+import { url } from "../helpers/routes.ts";
+
 /**
  * The 404, served the way a static host serves one: any unknown path returns
  * the custom page.
  */
 test.describe("404", () => {
 	test("serves the custom page for an unknown route", { tag: ["@issue-28"] }, async ({ page }) => {
-		for (const path of ["/nope", "/releases/99.0.0", "/tags/not-a-tag", "/deep/nested/nonsense"]) {
+		for (const path of [url("/nope"), url("/releases/99.0.0"), url("/tags/not-a-tag"), url("/deep/nested/nonsense")]) {
 			const response = await page.goto(path);
 
 			expect(response?.status(), path).toBe(404);
@@ -15,7 +17,7 @@ test.describe("404", () => {
 	});
 
 	test("renders through the base layout, chrome and all", { tag: ["@issue-28"] }, async ({ page }) => {
-		await page.goto("/nope");
+		await page.goto("nope");
 
 		await expect(page.getByRole("banner")).toBeVisible();
 		await expect(page.getByRole("main")).toBeVisible();
@@ -25,7 +27,7 @@ test.describe("404", () => {
 	});
 
 	test("frames the copy as a lookup that returned nothing", { tag: ["@issue-28"] }, async ({ page }) => {
-		await page.goto("/nope");
+		await page.goto("nope");
 
 		const table = page.locator(".metadata-table");
 		await expect(table).toContainText("Status");
@@ -38,15 +40,15 @@ test.describe("404", () => {
 	});
 
 	test("links back to home and the archive", { tag: ["@issue-28"] }, async ({ page }) => {
-		await page.goto("/nope");
+		await page.goto("nope");
 
 		const recovery = page.getByRole("navigation", { name: "Recovery" });
 		const hrefs = await recovery.getByRole("link").evaluateAll((links) =>
 			links.map((link) => link.getAttribute("href")!),
 		);
 
-		expect(hrefs).toContain("/");
-		expect(hrefs).toContain("/releases");
+		expect(hrefs).toContain(url("/"));
+		expect(hrefs).toContain(url("/releases"));
 		for (const href of hrefs) {
 			expect((await page.request.get(href)).status(), href).toBe(200);
 		}

@@ -9,7 +9,7 @@
 import rss from "@astrojs/rss";
 import type { APIRoute } from "astro";
 
-import { changeTypeLabel, formatDate, pluralise } from "../lib/format.ts";
+import { changeTypeLabel, formatDate, pluralise, routes } from "../lib/format.ts";
 import { getAllReleases, type Release } from "../lib/queries.ts";
 import { SITE } from "../lib/site.ts";
 
@@ -21,7 +21,7 @@ import { SITE } from "../lib/site.ts";
  * `/goat-test` path the project is published under.
  */
 function releaseUrl(version: string, site: URL): string {
-	return new URL(`releases/${version}`, `${site.href.replace(/\/$/, "")}/`).href;
+	return new URL(routes.release(version), site).href;
 }
 
 /** Escapes text for inclusion in the CDATA-free HTML body of an item. */

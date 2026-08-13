@@ -19,7 +19,7 @@ const PROBE = `
 `;
 
 async function probe(page: import("@playwright/test").Page) {
-	await page.goto("/");
+	await page.goto("");
 	await page.evaluate((html) => {
 		document.querySelector("main")!.innerHTML = html;
 	}, PROBE);
@@ -161,7 +161,7 @@ test.describe("typographic treatment", () => {
 
 test.describe("typographic rules", () => {
 	test("draws an hr at full width inside a stack", { tag: ["@issue-16"] }, async ({ page }) => {
-		await page.goto("/");
+		await page.goto("");
 		await page.evaluate(() => {
 			document.querySelector("main")!.innerHTML =
 				'<div class="stack" style="inline-size:600px"><p>a</p><hr data-t="hr" /><p>b</p></div>';

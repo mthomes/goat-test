@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 /** The release cadence heatmap on `/stats`. */
 test.describe("cadence heatmap", () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto("/stats");
+		await page.goto("stats");
 		await page.evaluate(() => document.fonts.ready);
 	});
 
@@ -55,7 +55,7 @@ test.describe("cadence heatmap", () => {
 			.filter((value) => value !== "—")
 			.reduce((sum, value) => sum + Number.parseInt(value, 10), 0);
 
-		await page.goto("/releases");
+		await page.goto("releases");
 		const releases = Number.parseInt(
 			/(\d+) releases/.exec(await page.locator(".archive__count").first().innerText())![1],
 			10,
@@ -84,7 +84,7 @@ test.describe("cadence heatmap", () => {
 
 	test("stays legible at 320px without scrolling sideways", { tag: ["@issue-33"] }, async ({ page }) => {
 		await page.setViewportSize({ width: 320, height: 900 });
-		await page.goto("/stats");
+		await page.goto("stats");
 
 		const grid = await page.locator(".heatmap__grid").boundingBox();
 		expect(grid!.width).toBeLessThanOrEqual(320);

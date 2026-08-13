@@ -1,22 +1,24 @@
 import { expect, test } from "@playwright/test";
 
+import { url } from "../helpers/routes.ts";
+
 /** The front door. */
 test.describe("home page", () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto("/");
+		await page.goto("");
 	});
 
 	test("renders the latest release in full, as the hero", { tag: ["@issue-27"] }, async ({ page }) => {
 		// Same version the archive reports as newest.
-		await page.goto("/releases");
+		await page.goto("releases");
 		const newest = (await page.locator(".release-card__version").first().innerText()).trim();
 
-		await page.goto("/");
+		await page.goto("");
 		await expect(page.locator(".release-hero__version")).toContainText(newest);
 
 		// In full: every change entry that release has, not a summary of them.
 		const onHome = await page.locator(".change-entry").count();
-		await page.goto(`/releases/${newest.slice(1)}`);
+		await page.goto(`releases/${newest.slice(1)}`);
 		const onDetail = await page.locator(".change-entry").count();
 		expect(onHome).toBe(onDetail);
 	});
@@ -46,17 +48,17 @@ test.describe("home page", () => {
 
 	test("counts open known issues and links to the tracker", { tag: ["@issue-27"] }, async ({ page }) => {
 		const link = page.getByRole("link", { name: /known issues? still open/i });
-		await expect(link).toHaveAttribute("href", "/known-issues");
+		await expect(link).toHaveAttribute("href", url("/known-issues"));
 
 		const claimed = Number.parseInt(/(\d+)/.exec(await link.innerText())![1], 10);
 
-		await page.goto("/known-issues");
+		await page.goto("known-issues");
 		await expect(page.locator('.known-issue[data-state="open"]')).toHaveCount(claimed);
 	});
 
 	test("links through to the full archive", { tag: ["@issue-27"] }, async ({ page }) => {
 		const link = page.getByRole("link", { name: /all \d+ releases/i });
-		await expect(link).toHaveAttribute("href", "/releases");
+		await expect(link).toHaveAttribute("href", url("/releases"));
 
 		const claimed = Number.parseInt(/(\d+)/.exec(await link.innerText())![1], 10);
 		expect(claimed).toBe(30);
@@ -73,9 +75,9 @@ test.describe("home page", () => {
 			);
 		};
 
-		const home = await classesOn("/");
+		const home = await classesOn(url("/"));
 		const elsewhere = new Set<string>();
-		for (const path of ["/releases", "/releases/34.2.1", "/known-issues", "/tags"]) {
+		for (const path of [url("/releases"), url("/releases/34.2.1"), url("/known-issues"), url("/tags")]) {
 			for (const name of await classesOn(path)) elsewhere.add(name);
 		}
 
