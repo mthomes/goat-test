@@ -1,0 +1,312 @@
+{
+	"repo": "mthomes/goat-test",
+	"syncedAt": "2026-08-13T15:24:23.154Z",
+	"issues": [
+		{
+			"number": 1,
+			"title": "Epic: Foundation & Tooling",
+			"state": "OPEN",
+			"epic": true
+		},
+		{
+			"number": 2,
+			"title": "Epic: Design System (CUBE)",
+			"state": "OPEN",
+			"epic": true
+		},
+		{
+			"number": 3,
+			"title": "Epic: Content Model",
+			"state": "OPEN",
+			"epic": true
+		},
+		{
+			"number": 4,
+			"title": "Epic: Core Pages",
+			"state": "OPEN",
+			"epic": true
+		},
+		{
+			"number": 5,
+			"title": "Epic: Aggregate Views",
+			"state": "OPEN",
+			"epic": true
+		},
+		{
+			"number": 6,
+			"title": "Epic: Feeds & SEO",
+			"state": "OPEN",
+			"epic": true
+		},
+		{
+			"number": 7,
+			"title": "Epic: Infrastructure & Quality",
+			"state": "OPEN",
+			"epic": true
+		},
+		{
+			"number": 8,
+			"title": "Scaffold the Astro project",
+			"state": "CLOSED",
+			"epic": false
+		},
+		{
+			"number": 9,
+			"title": "Establish the global stylesheet entry and @layer cascade order",
+			"state": "CLOSED",
+			"epic": false
+		},
+		{
+			"number": 10,
+			"title": "Build the base layout shell and document head",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 11,
+			"title": "Build the site header and footer blocks",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 12,
+			"title": "Author the token layer",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 13,
+			"title": "Author the reset layer",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 14,
+			"title": "Build the composition primitives",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 15,
+			"title": "Build the utility layer",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 16,
+			"title": "Establish the typographic treatment",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 17,
+			"title": "Add the dark carbon-copy palette",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 18,
+			"title": "Define the exception layer conventions",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 19,
+			"title": "Define the release content collection schema",
+			"state": "CLOSED",
+			"epic": false
+		},
+		{
+			"number": 20,
+			"title": "Build semver parsing and release-type utilities",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 21,
+			"title": "Model the known-issue lifecycle",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 22,
+			"title": "Build the content query layer",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 23,
+			"title": "Author 30 seed releases spanning v31.0.0 to v34.2.1",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 24,
+			"title": "Build the core content blocks",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 25,
+			"title": "Build the release detail page",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 26,
+			"title": "Build the paginated release archive",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 27,
+			"title": "Build the home page",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 28,
+			"title": "Build the 404 page",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 29,
+			"title": "Build the tag index and tag detail pages",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 30,
+			"title": "Build the change-type pages",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 31,
+			"title": "Build the Known Issues tracker",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 32,
+			"title": "Build the stats dashboard",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 33,
+			"title": "Build the release cadence heatmap",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 34,
+			"title": "Generate the RSS feed",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 35,
+			"title": "Add sitemap, canonical URLs and Open Graph metadata",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 36,
+			"title": "Configure Stylelint with CUBE layer rules",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 37,
+			"title": "Add CI workflow: astro check and production build",
+			"state": "CLOSED",
+			"epic": false
+		},
+		{
+			"number": 38,
+			"title": "Add Lighthouse CI with performance and accessibility budgets",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 39,
+			"title": "Add the GitHub Pages deploy workflow",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 40,
+			"title": "Epic: Testing & Verification",
+			"state": "OPEN",
+			"epic": true
+		},
+		{
+			"number": 41,
+			"title": "Set up Vitest and the unit test harness",
+			"state": "CLOSED",
+			"epic": false
+		},
+		{
+			"number": 42,
+			"title": "Set up Playwright and the E2E harness",
+			"state": "CLOSED",
+			"epic": false
+		},
+		{
+			"number": 43,
+			"title": "Establish the requirement traceability convention",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 44,
+			"title": "Unit-test the semver and known-issue models",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 45,
+			"title": "Test content schema invariants and the query layer",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 46,
+			"title": "E2E: core page journeys",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 47,
+			"title": "E2E: aggregate views and the known-issue lifecycle",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 48,
+			"title": "Automated accessibility tests with axe-core",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 49,
+			"title": "Guardrail tests: zero-JS budget and CUBE cascade integrity",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 50,
+			"title": "Visual regression snapshots in both colour schemes",
+			"state": "OPEN",
+			"epic": false
+		},
+		{
+			"number": 51,
+			"title": "Wire the full suite into CI with coverage and traceability reporting",
+			"state": "OPEN",
+			"epic": false
+		}
+	]
+}
