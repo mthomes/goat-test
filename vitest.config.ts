@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { getViteConfig } from "astro/config";
 
 /**
@@ -19,7 +20,6 @@ export default getViteConfig({
 			reportsDirectory: "coverage",
 			reporter: ["text", "html", "json-summary", "lcov"],
 			include: ["src/lib/**"],
-			all: true,
 			thresholds: {
 				statements: 90,
 				branches: 85,
