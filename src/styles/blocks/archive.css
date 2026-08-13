@@ -18,4 +18,13 @@
 		font-variant-numeric: tabular-nums;
 		letter-spacing: var(--tracking-tight);
 	}
+
+	.notfound__links {
+		--cluster-gap: var(--space-2xs) var(--space-m);
+
+		padding-block-start: var(--space-s);
+		border-block-start: var(--rule-line);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+	}
 }
