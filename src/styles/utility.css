@@ -1,4 +1,101 @@
-/* CUBE: utility. Single-purpose classes, every value from a token.
- * Authored in #15. */
+/* =========================================================================
+ * CUBE: utility
+ * =========================================================================
+ *
+ * Single-purpose classes, each doing one job, each tracing back to a token.
+ * There are no literal values in this layer at all — if a utility needs a
+ * number the token layer does not have, the token layer is what needs
+ * changing.
+ *
+ * Hand-authored rather than generated. The point of this project is to
+ * demonstrate CUBE, and a generated utility firehose would bury the six
+ * composition primitives that are meant to be doing the work.
+ * ========================================================================= */
+
 @layer utility {
+	/* ------------------------------------------------------------ measure --
+	 * Line length. Prose gets `.measure`; anything set at a large step wants
+	 * `.measure-narrow`, because a 66-character line at --step-4 is a wall. */
+	.measure {
+		max-inline-size: var(--measure);
+	}
+
+	.measure-narrow {
+		max-inline-size: var(--measure-narrow);
+	}
+
+	/* ---------------------------------------------------- visually hidden --
+	 *
+	 * Hidden from sight, still in the accessibility tree — and it comes back
+	 * the moment it, or anything inside it, takes focus. A skip link hidden
+	 * with `display: none` is not a skip link.
+	 *
+	 * The 1×1 box is expressed with `--rule-hairline` because it is the
+	 * thinnest length this project defines and this layer takes no literals.
+	 */
+	.visually-hidden:not(:focus):not(:focus-within) {
+		position: absolute;
+		overflow: hidden;
+		clip-path: inset(50%);
+		inline-size: var(--rule-hairline);
+		block-size: var(--rule-hairline);
+		white-space: nowrap;
+	}
+
+	/* ------------------------------------------------------------- region --
+	 * Vertical padding for a page section, so sections are separated by
+	 * space rather than by a rule wherever the design allows it. */
+	.region {
+		padding-block: var(--region-space, var(--space-l-xl));
+	}
+
+	/* -------------------------------------------------------- flow space --
+	 * Per-instance overrides for `.stack`. Set on the stack itself, not on
+	 * the children — the owl reads it from the parent. */
+	.flow-space-3xs { --flow-space: var(--space-3xs); }
+	.flow-space-2xs { --flow-space: var(--space-2xs); }
+	.flow-space-xs { --flow-space: var(--space-xs); }
+	.flow-space-s { --flow-space: var(--space-s); }
+	.flow-space-m { --flow-space: var(--space-m); }
+	.flow-space-l { --flow-space: var(--space-l); }
+	.flow-space-xl { --flow-space: var(--space-xl); }
+	.flow-space-2xl { --flow-space: var(--space-2xl); }
+	.flow-space-3xl { --flow-space: var(--space-3xl); }
+	.flow-space-tight { --flow-space: var(--flow-space-tight); }
+	.flow-space-loose { --flow-space: var(--flow-space-loose); }
+
+	/* ---------------------------------------------------------- type size --
+	 * One class per rung of the fluid scale. */
+	.text-step-down-1 { font-size: var(--step-down-1); }
+	.text-step-0 { font-size: var(--step-0); }
+	.text-step-1 { font-size: var(--step-1); }
+	.text-step-2 { font-size: var(--step-2); }
+	.text-step-3 { font-size: var(--step-3); }
+	.text-step-4 { font-size: var(--step-4); }
+	.text-step-5 { font-size: var(--step-5); }
+	.text-step-6 { font-size: var(--step-6); }
+
+	/* -------------------------------------------------------------- type --
+	 * Family, weight, case and tracking. `.text-small-caps` and
+	 * `.tracking-label` are the atoms the section-label treatment (#16) is
+	 * built from — kept separate so either can be used on its own. */
+	.font-serif { font-family: var(--font-serif); }
+	.font-mono { font-family: var(--font-mono); }
+	.text-regular { font-weight: var(--font-weight-regular); }
+	.text-bold { font-weight: var(--font-weight-bold); }
+	.text-small-caps { font-variant-caps: all-small-caps; }
+	.tracking-label { letter-spacing: var(--tracking-label); }
+	.tracking-tight { letter-spacing: var(--tracking-tight); }
+
+	/* Version numbers and dates stacked in a list look broken without
+	 * tabular figures — the columns simply do not line up. */
+	.tabular-nums { font-variant-numeric: tabular-nums; }
+
+	/* ------------------------------------------------------------ colour --
+	 * Ink, muted and accent for text; paper and inset for grounds. */
+	.text-ink { color: var(--colour-ink); }
+	.text-muted { color: var(--colour-ink-muted); }
+	.text-accent { color: var(--colour-accent); }
+	.ground-paper { background-color: var(--colour-paper); }
+	.ground-inset { background-color: var(--colour-paper-inset); }
 }

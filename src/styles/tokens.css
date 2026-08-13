@@ -114,6 +114,15 @@
 		--font-serif: charter, ui-serif, georgia, "times new roman", serif;
 		--font-mono: "ibm plex mono", ui-monospace, sfmono-regular, menlo, consolas, monospace;
 
+		/* --------------------------------------------- weight and tracking --
+		 * Two weights, because a manual set on a laser printer had two. The
+		 * label tracking is what makes a small-caps run of `RELEASED` read as
+		 * a printed label rather than as shouting. */
+		--font-weight-regular: 400;
+		--font-weight-bold: 700;
+		--tracking-label: 0.09em;
+		--tracking-tight: -0.01em;
+
 		/* ------------------------------------------------------- measure --
 		 * Line length. 66 characters for prose, tighter for standfirsts and
 		 * anything set at a large step. */
