@@ -1,0 +1,72 @@
+---
+/** Every change of one type, across the whole history. */
+import type { GetStaticPaths } from "astro";
+
+import ChangeIndex from "../../components/ChangeIndex.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { changeTypeLabel, pluralise, routes } from "../../lib/format.ts";
+import {
+	getChangesByType,
+	getStats,
+	RESOLVED_CHANGE_TYPES,
+	type ChangeInRelease,
+	type ChangeType,
+} from "../../lib/queries.ts";
+
+export const getStaticPaths = (async () => {
+	const stats = await getStats();
+
+	// `known-issue` is excluded: see the note on /changes.
+	return Promise.all(
+		RESOLVED_CHANGE_TYPES.map(async (type) => ({
+			params: { type },
+			props: {
+				type,
+				changes: await getChangesByType(type),
+				counts: stats.changesByType,
+			},
+		})),
+	);
+}) satisfies GetStaticPaths;
+
+interface Props {
+	type: ChangeType;
+	changes: readonly ChangeInRelease[];
+	counts: Record<ChangeType, number>;
+}
+
+const { type, changes, counts } = Astro.props;
+const releases = new Set(changes.map((change) => change.release.version));
+---
+
+<BaseLayout
+	title={changeTypeLabel(type)}
+	description={`${pluralise(changes.length, "change")} of type ${type}, across ${pluralise(releases.size, "release")}.`}
+>
+	<div class="wrapper region stack">
+		<header class="stack flow-space-2xs">
+			<h1 class="change-type__title" data-change-type={type}>{changeTypeLabel(type)}</h1>
+			<p class="archive__count">
+				{pluralise(changes.length, "entry", "entries")} across {pluralise(releases.size, "release")},
+				newest first
+			</p>
+		</header>
+
+		<nav class="change-type__cross cluster" aria-label="Other change types">
+			{
+				RESOLVED_CHANGE_TYPES.filter((other) => other !== type).map((other) => (
+					<a href={routes.changeType(other)} data-change-type={other}>
+						{changeTypeLabel(other)} ({counts[other]})
+					</a>
+				))
+			}
+			<a href={routes.knownIssues()}>Known issues ({counts["known-issue"]})</a>
+		</nav>
+
+		<ChangeIndex changes={changes} label={`Changes of type ${type}`} />
+
+		<p class="archive__count">
+			<a href={routes.changes()}>← All change types</a>
+		</p>
+	</div>
+</BaseLayout>

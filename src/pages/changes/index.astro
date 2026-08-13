@@ -1,0 +1,57 @@
+---
+/**
+ * Every change on the site, split by type.
+ *
+ * `known-issue` deliberately has no page of its own here. A known issue is not
+ * a thing that was done, it is a thing that is outstanding, and its whole
+ * value is the open/resolved span the tracker shows. Giving it a page here
+ * would be a worse copy of that page. It is listed below with its count and a
+ * link to the tracker, so it is reachable and the omission is explicit rather
+ * than accidental.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { changeTypeLabel, pluralise, routes } from "../../lib/format.ts";
+import { getStats, RESOLVED_CHANGE_TYPES } from "../../lib/queries.ts";
+
+const stats = await getStats();
+const knownIssueCount = stats.changesByType["known-issue"];
+const done = RESOLVED_CHANGE_TYPES.reduce((sum, type) => sum + stats.changesByType[type], 0);
+---
+
+<BaseLayout
+	title="Changes"
+	description={`Every change ever made, by type: ${done} across ${RESOLVED_CHANGE_TYPES.length} types, plus ${knownIssueCount} known issues.`}
+>
+	<div class="wrapper region stack">
+		<header class="stack flow-space-2xs">
+			<h1>Changes</h1>
+			<p class="archive__count">
+				{pluralise(stats.totalChanges, "entry", "entries")} across the whole record
+			</p>
+		</header>
+
+		<ol class="tag-index stack flow-space-3xs" role="list">
+			{
+				RESOLVED_CHANGE_TYPES.map((type) => (
+					<li class="tag-index__row repel" data-change-type={type}>
+						<a class="tag-index__tag" href={routes.changeType(type)}>
+							{changeTypeLabel(type)}
+						</a>
+						<span class="tag-index__count">{stats.changesByType[type]}</span>
+					</li>
+				))
+			}
+			<li class="tag-index__row repel" data-change-type="known-issue">
+				<a class="tag-index__tag" href={routes.knownIssues()}>Known issues →</a>
+				<span class="tag-index__count">{knownIssueCount}</span>
+			</li>
+		</ol>
+
+		<p class="changes-note measure">
+			Known issues are tracked separately. They are not things that were done, and
+			the point of one is the span between the release that opened it and the
+			release that closed it — which is what the
+			<a href={routes.knownIssues()}>tracker</a> shows and a list here could not.
+		</p>
+	</div>
+</BaseLayout>
