@@ -1,0 +1,17 @@
+/* A change lifted out of its release, showing where it shipped. */
+@layer block {
+	.change-index {
+		padding-inline-start: 0;
+		list-style: none;
+	}
+
+	.change-index__release {
+		--cluster-gap: var(--space-3xs) var(--space-2xs);
+
+		max-inline-size: none;
+		color: var(--colour-ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		font-variant-numeric: tabular-nums;
+	}
+}

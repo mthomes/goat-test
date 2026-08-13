@@ -7,7 +7,9 @@
 @import "./release-card.css";
 @import "./release-page.css";
 @import "./change-list.css";
+@import "./change-index.css";
 @import "./tag-list.css";
+@import "./tag-index.css";
 @import "./known-issue.css";
 @import "./pagination.css";
 @import "./archive.css";

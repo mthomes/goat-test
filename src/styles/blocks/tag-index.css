@@ -1,0 +1,39 @@
+/* The tag index, set as a printed index is: term on the left, count on the
+ * right, leaders in between doing the work of a dotted line. */
+@layer block {
+	.tag-index {
+		padding-inline-start: 0;
+		list-style: none;
+	}
+
+	.tag-index__row {
+		--repel-gap: var(--space-2xs);
+
+		padding-block: var(--space-3xs);
+		border-block-end: var(--rule-line);
+	}
+
+	.tag-index__tag {
+		font-family: var(--font-mono);
+		font-size: var(--step-0);
+		letter-spacing: var(--tracking-label);
+	}
+
+	.tag-index__count {
+		color: var(--colour-ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.tag-page__title {
+		font-family: var(--font-mono);
+		font-size: var(--step-4);
+		letter-spacing: var(--tracking-tight);
+	}
+
+	.tag-page__title::before {
+		content: "/";
+		color: var(--colour-rule-strong);
+	}
+}
