@@ -1,0 +1,149 @@
+---
+/**
+ * Aggregate numbers over the whole history.
+ *
+ * Typeset as a statistical table rather than as charts. A 1987 manual would
+ * print the numbers, and a number printed is a number you can read off — a bar
+ * chart of six values is decoration with a legend.
+ *
+ * Every figure comes from getStats(). Nothing on this page is computed here.
+ */
+import MetadataTable from "../components/MetadataTable.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+	changeTypeLabel,
+	formatDate,
+	isoDate,
+	pluralise,
+	releaseTypeLabel,
+	routes,
+} from "../lib/format.ts";
+import { CHANGE_TYPES, getStats } from "../lib/queries.ts";
+
+const stats = await getStats();
+const { cadence, knownIssues } = stats;
+
+const round = (value: number, places = 1) =>
+	value.toFixed(places).replace(/\.0+$/, "");
+
+const ratio =
+	knownIssues.open === 0
+		? "—"
+		: `${round(stats.fixedToBroken, 2)} : 1`;
+---
+
+<BaseLayout
+	title="Stats"
+	description={`${stats.totalReleases} releases, ${stats.totalChanges} changes, ${knownIssues.open} still open. The numbers behind the record.`}
+>
+	<div class="wrapper region stack">
+		<header class="stack flow-space-2xs">
+			<h1>Stats</h1>
+			<p class="archive__count">
+				Every figure below is derived from the collection at build time.
+			</p>
+		</header>
+
+		<section class="stack flow-space-xs" aria-labelledby="releases">
+			<h2 class="change-list__label" id="releases">Releases</h2>
+			<MetadataTable
+				label="Release totals"
+				rows={[
+					{ label: "Total", value: String(stats.totalReleases) },
+					...(["major", "minor", "patch"] as const).map((type) => ({
+						label: releaseTypeLabel(type),
+						value: String(stats.releasesByType[type]),
+					})),
+					{
+						label: "First",
+						value: cadence.firstRelease ? formatDate(cadence.firstRelease) : "—",
+						datetime: cadence.firstRelease ? isoDate(cadence.firstRelease) : undefined,
+					},
+					{
+						label: "Latest",
+						value: cadence.lastRelease ? formatDate(cadence.lastRelease) : "—",
+						datetime: cadence.lastRelease ? isoDate(cadence.lastRelease) : undefined,
+					},
+				]}
+			/>
+		</section>
+
+		<section class="stack flow-space-xs" aria-labelledby="changes">
+			<h2 class="change-list__label" id="changes">Changes</h2>
+			<MetadataTable
+				label="Change totals by type"
+				rows={[
+					{ label: "Total", value: String(stats.totalChanges) },
+					...CHANGE_TYPES.map((type) => ({
+						label: changeTypeLabel(type),
+						value: String(stats.changesByType[type]),
+					})),
+				]}
+			/>
+		</section>
+
+		<section class="stack flow-space-xs" aria-labelledby="cadence">
+			<h2 class="change-list__label" id="cadence">Cadence</h2>
+			<MetadataTable
+				label="Time between releases"
+				rows={[
+					{ label: "Average gap", value: `${round(cadence.averageGapDays)} days` },
+					{ label: "Longest gap", value: `${round(cadence.longestGapDays)} days` },
+					{
+						label: "Longest gap between",
+						value: cadence.longestGapBetween
+							? `v${cadence.longestGapBetween[0]} → v${cadence.longestGapBetween[1]}`
+							: "—",
+					},
+				]}
+			/>
+		</section>
+
+		<section class="stack flow-space-xs" aria-labelledby="issues">
+			<h2 class="change-list__label" id="issues">Known issues</h2>
+			<MetadataTable
+				label="Known-issue totals"
+				rows={[
+					{ label: "Opened", value: String(knownIssues.total) },
+					{ label: "Resolved", value: String(knownIssues.resolved) },
+					{ label: "Still open", value: String(knownIssues.open) },
+					{ label: "Fixed : broken", value: ratio },
+					{
+						label: "Longest open",
+						value: knownIssues.longestOpen
+							? `${pluralise(knownIssues.longestOpen.ageInReleases, "release")}, since v${knownIssues.longestOpen.openedIn}`
+							: "—",
+					},
+				]}
+			/>
+			{
+				knownIssues.longestOpen && (
+					<p class="stats__note measure">
+						<a href={`${routes.knownIssues()}#${knownIssues.longestOpen.id}`}>
+							{knownIssues.longestOpen.text}
+						</a>
+					</p>
+				)
+			}
+		</section>
+
+		<section class="stack flow-space-xs" aria-labelledby="tags">
+			<h2 class="change-list__label" id="tags">Most-patched areas</h2>
+			<ol class="tag-index stack flow-space-3xs" role="list">
+				{
+					stats.topTags.map((tag, rank) => (
+						<li class="tag-index__row repel">
+							<span class="stats__rank">
+								<span class="stats__position">{rank + 1}</span>
+								<a class="tag-index__tag" href={routes.tag(tag.slug)}>
+									{tag.tag}
+								</a>
+							</span>
+							<span class="tag-index__count">{tag.count}</span>
+						</li>
+					))
+				}
+			</ol>
+		</section>
+	</div>
+</BaseLayout>
