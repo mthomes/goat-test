@@ -103,6 +103,25 @@
 		--sigil: var(--sigil-known-issue);
 	}
 
+	/* --------------------------------------------------------- heat level --
+	 * A month's release count, bucketed. Four steps, because a printed ramp
+	 * with more than four is a ramp nobody can read off a key. */
+	[data-heat="0"] {
+		--heat: var(--heat-0);
+	}
+
+	[data-heat="1"] {
+		--heat: var(--heat-1);
+	}
+
+	[data-heat="2"] {
+		--heat: var(--heat-2);
+	}
+
+	[data-heat="3"] {
+		--heat: var(--heat-3);
+	}
+
 	/* ------------------------------------------------------- issue state --
 	 *
 	 * Open versus resolved, expressed here rather than by two different

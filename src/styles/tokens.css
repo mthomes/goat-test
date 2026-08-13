@@ -169,6 +169,17 @@
 		--rule-line-strong: var(--rule-medium) solid var(--colour-rule-strong);
 		--rule-line-heavy: var(--rule-heavy) solid var(--colour-ink);
 
+		/* ------------------------------------------------------- heat ramp --
+		 *
+		 * Four steps for the cadence heatmap (#33), mixed from the accent into
+		 * the paper so the ramp re-tunes itself with the palette instead of
+		 * needing a second set of values for dark.
+		 */
+		--heat-0: var(--colour-paper-inset);
+		--heat-1: color-mix(in srgb, var(--colour-accent) 30%, var(--colour-paper));
+		--heat-2: color-mix(in srgb, var(--colour-accent) 60%, var(--colour-paper));
+		--heat-3: var(--colour-accent);
+
 		/* ---------------------------------------------------------- sigils --
 		 *
 		 * Change types are marked with a typographic sigil, never a coloured
