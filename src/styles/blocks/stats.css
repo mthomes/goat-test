@@ -1,0 +1,24 @@
+/* A statistical table, not chart chrome. The rank column is set in the mono
+ * with tabular figures so the numbers form a column rather than a queue. */
+@layer block {
+	.stats__rank {
+		display: inline-flex;
+		gap: var(--space-xs);
+		align-items: baseline;
+	}
+
+	.stats__position {
+		display: inline-block;
+		min-inline-size: var(--space-s);
+		color: var(--colour-rule-strong);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		font-variant-numeric: tabular-nums;
+		text-align: end;
+	}
+
+	.stats__note {
+		color: var(--colour-ink-muted);
+		font-size: var(--step-down-1);
+	}
+}
