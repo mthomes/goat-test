@@ -50,7 +50,17 @@ export default defineConfig({
 	webServer: {
 		command: `npm run build && npm run preview -- --port ${PORT}`,
 		url: BASE_URL,
-		reuseExistingServer: !process.env.CI,
+		env: {
+			// Astro 7 detects an agentic environment and daemonises `astro
+			// preview`, which makes the process Playwright is supervising exit
+			// immediately. Setting this variable at all disables that
+			// auto-detection and keeps the server in the foreground.
+			ASTRO_PREVIEW_BACKGROUND: "0",
+		},
+		// Never reuse: a leftover server from an earlier run serves an earlier
+		// build, and every guarantee this suite checks is a property of the
+		// build output.
+		reuseExistingServer: false,
 		timeout: 120_000,
 		stdout: "pipe",
 		stderr: "pipe",

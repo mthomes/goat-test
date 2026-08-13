@@ -31,7 +31,8 @@ const documentTitle = title === SITE.name ? `${SITE.name} · ${SITE.tagline}` : 
 		<meta name="description" content={description} />
 		<meta name="generator" content={Astro.generator} />
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-		<meta name="theme-color" content={SITE.themeColour} />
+		<meta name="theme-color" content={SITE.themeColour.light} media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content={SITE.themeColour.dark} media="(prefers-color-scheme: dark)" />
 
 		{/* The two faces every page needs immediately. The bold and italic cuts
 		    are left to load on demand — preloading four faces to save a reflow
