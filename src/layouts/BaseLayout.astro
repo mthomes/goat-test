@@ -32,6 +32,24 @@ const documentTitle = title === SITE.name ? `${SITE.name} · ${SITE.tagline}` : 
 		<meta name="generator" content={Astro.generator} />
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<meta name="theme-color" content={SITE.themeColour} />
+
+		{/* The two faces every page needs immediately. The bold and italic cuts
+		    are left to load on demand — preloading four faces to save a reflow
+		    on the ones most pages never use is a bad trade. */}
+		<link
+			rel="preload"
+			href="/fonts/charis-sil-latin-400-normal.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
+		<link
+			rel="preload"
+			href="/fonts/ibm-plex-mono-latin-400-normal.woff2"
+			as="font"
+			type="font/woff2"
+			crossorigin
+		/>
 		<title>{documentTitle}</title>
 	</head>
 	<body>

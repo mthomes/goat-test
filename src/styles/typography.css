@@ -1,0 +1,210 @@
+/* =========================================================================
+ * CUBE: the global tier — typography
+ * =========================================================================
+ *
+ * The 1987 technical-manual look lives almost entirely here. Two faces, both
+ * self-hosted, doing two jobs that never overlap:
+ *
+ *   Charis SIL     prose. A direct descendant of Bitstream Charter, which
+ *                  Matthew Carter drew in 1987 for the laser printers of the
+ *                  day — sturdy, low-contrast, and designed to survive being
+ *                  printed at 300dpi on cheap paper. It is the closest thing
+ *                  to the actual object this site is imitating.
+ *   IBM Plex Mono  every piece of metadata. Versions, dates, labels, counts,
+ *                  sigils. If it is a fact rather than a sentence, it is set
+ *                  in the mono.
+ *
+ * This sits in `@layer reset` alongside the reset itself: CUBE's global tier
+ * is reset *plus* element defaults, and splitting them would put a heading's
+ * size and a heading's margin on opposite sides of the cascade for no reason.
+ * ========================================================================= */
+
+@layer reset {
+	/* --------------------------------------------------------- the faces --
+	 * Latin subset only, woff2 only, `swap` so text is readable immediately
+	 * and reflows once rather than hiding behind an invisible-text flash.
+	 * The two 400 weights are preloaded from the document head. */
+
+	@font-face {
+		font-family: "Charis SIL";
+		font-style: normal;
+		font-weight: 400;
+		font-display: swap;
+		src: url("/fonts/charis-sil-latin-400-normal.woff2") format("woff2");
+	}
+
+	@font-face {
+		font-family: "Charis SIL";
+		font-style: italic;
+		font-weight: 400;
+		font-display: swap;
+		src: url("/fonts/charis-sil-latin-400-italic.woff2") format("woff2");
+	}
+
+	@font-face {
+		font-family: "Charis SIL";
+		font-style: normal;
+		font-weight: 700;
+		font-display: swap;
+		src: url("/fonts/charis-sil-latin-700-normal.woff2") format("woff2");
+	}
+
+	@font-face {
+		font-family: "Charis SIL";
+		font-style: italic;
+		font-weight: 700;
+		font-display: swap;
+		src: url("/fonts/charis-sil-latin-700-italic.woff2") format("woff2");
+	}
+
+	@font-face {
+		font-family: "IBM Plex Mono";
+		font-style: normal;
+		font-weight: 400;
+		font-display: swap;
+		src: url("/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+	}
+
+	@font-face {
+		font-family: "IBM Plex Mono";
+		font-style: normal;
+		font-weight: 600;
+		font-display: swap;
+		src: url("/fonts/ibm-plex-mono-latin-600-normal.woff2") format("woff2");
+	}
+
+	/* ----------------------------------------------------- prose defaults --
+	 *
+	 * Measure, leading and margins are set once here and hold at every step
+	 * of the scale, because every one of them is expressed as a ratio or a
+	 * token rather than as a fixed number of pixels.
+	 */
+	body {
+		background-color: var(--colour-paper);
+		color: var(--colour-ink);
+		font-family: var(--font-serif);
+		font-size: var(--step-0);
+		line-height: var(--leading-body);
+		/* Charis is drawn a shade narrow; the optical size is right at 1. */
+		font-synthesis: none;
+	}
+
+	p {
+		max-inline-size: var(--measure);
+		text-wrap: pretty;
+	}
+
+	/* ------------------------------------------------------ the hierarchy --
+	 *
+	 * Headings sit on the fluid scale and are noticeably tighter than body —
+	 * tighter leading and slightly negative tracking are most of what makes
+	 * a heading read as a heading rather than as a large paragraph.
+	 *
+	 * `--step-5` and `--step-6` are deliberately unused here: they are held
+	 * back for the version number on a release page, which is the one piece
+	 * of type on this site allowed to be a hero.
+	 */
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		max-inline-size: var(--measure-narrow);
+		font-weight: var(--font-weight-bold);
+		line-height: var(--leading-heading);
+		letter-spacing: var(--tracking-tight);
+		text-wrap: balance;
+	}
+
+	h1 {
+		font-size: var(--step-4);
+	}
+
+	h2 {
+		font-size: var(--step-3);
+	}
+
+	h3 {
+		font-size: var(--step-2);
+	}
+
+	h4 {
+		font-size: var(--step-1);
+	}
+
+	h5 {
+		font-size: var(--step-0);
+	}
+
+	/* The smallest heading is a section label rather than a title, so it is
+	 * set in the mono and given the label treatment directly. */
+	h6 {
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		font-variant-caps: all-small-caps;
+		font-weight: var(--font-weight-regular);
+		letter-spacing: var(--tracking-label);
+	}
+
+	/* ------------------------------------------------------ the mono tier --
+	 *
+	 * Every fact on the site. Tabular figures matter more than they sound:
+	 * a column of version numbers without them looks broken, because the
+	 * digits do not line up between rows.
+	 */
+	code,
+	kbd,
+	samp,
+	pre,
+	time,
+	th,
+	td {
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		font-variant-numeric: tabular-nums;
+		letter-spacing: var(--tracking-label);
+	}
+
+	/* --------------------------------------------------------- the rules --
+	 * A hairline across the column, defined once as `--rule-line` so a block
+	 * asks for "the project's rule" rather than for one particular pixel. */
+	hr {
+		block-size: 0;
+		/* The UA stylesheet sets `margin-inline: auto`, which stops an `hr`
+		 * stretching when it is a flex item — which, inside `.stack`, it
+		 * always is. Left unreset it renders at zero width. */
+		margin-block: var(--space-m);
+		margin-inline: 0;
+		border: 0;
+		border-block-start: var(--rule-line);
+	}
+
+	/* --------------------------------------------------------- the links --
+	 * Underlined, in the accent, with the underline set clear of the
+	 * descenders — a manual's cross-references were printed, not hovered. */
+	a {
+		color: var(--colour-accent);
+		text-decoration-color: var(--colour-rule-strong);
+		text-decoration-thickness: var(--rule-hairline);
+		text-underline-offset: var(--underline-offset);
+	}
+
+	a:hover {
+		text-decoration-color: currentcolor;
+	}
+
+	strong,
+	b {
+		font-weight: var(--font-weight-bold);
+	}
+
+	small {
+		font-size: var(--step-down-1);
+	}
+
+	abbr[title] {
+		text-decoration: underline dotted;
+		cursor: help;
+	}
+}
