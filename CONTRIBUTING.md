@@ -79,6 +79,40 @@ and makes the requirement set itself reviewable in a diff. Re-run
 
 CI prints the table to the job summary on every run.
 
+## CI, and the required status checks
+
+Every pull request runs six jobs. All six are **required status checks** for
+branch protection on `main`:
+
+| Check | What it gates |
+| ----- | ------------- |
+| `Lint, types, build` | Stylelint (including the CUBE layer rules), the no-`<style>`-block grep, `astro check`, and a production build — which is where content-schema violations surface |
+| `Unit + coverage` | Vitest with v8 coverage; thresholds are 90% statements / 85% branches on `src/lib/**` |
+| `Guardrails` | Zero-JS budget and cascade integrity, asserted against `dist/` |
+| `E2E 1/4`–`4/4` | Playwright across Chromium, Firefox, WebKit, a 320px viewport and the dark scheme — including the axe and contrast suites |
+| `Visual regression` | 36 screenshot baselines against the committed Linux set |
+| `Requirement traceability` | `npm run trace -- --strict` — **any issue with acceptance criteria and no covering test fails the build** |
+
+`Lighthouse / Budgets` runs as a separate workflow and is also required:
+performance ≥ 98, accessibility = 100, best practices ≥ 95, and zero bytes of
+JavaScript.
+
+To set them up:
+
+```sh
+gh api -X PUT repos/mthomes/goat-test/branches/main/protection/required_status_checks \
+  -f strict=true \
+  -f 'contexts[]=Lint, types, build' \
+  -f 'contexts[]=Unit + coverage' \
+  -f 'contexts[]=Guardrails' \
+  -f 'contexts[]=Visual regression' \
+  -f 'contexts[]=Requirement traceability' \
+  -f 'contexts[]=Budgets'
+```
+
+The E2E suite is sharded four ways to keep wall-clock down; the shards produce
+blob reports that a follow-up job merges into a single HTML report.
+
 ## Working a ticket
 
 1. Branch off `main`.

@@ -1,6 +1,6 @@
 {
 	"repo": "mthomes/goat-test",
-	"syncedAt": "2026-08-13T15:24:23.154Z",
+	"syncedAt": "2026-08-13T17:54:25.417Z",
 	"issues": [
 		{
 			"number": 1,
@@ -59,55 +59,55 @@
 		{
 			"number": 10,
 			"title": "Build the base layout shell and document head",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 11,
 			"title": "Build the site header and footer blocks",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 12,
 			"title": "Author the token layer",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 13,
 			"title": "Author the reset layer",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 14,
 			"title": "Build the composition primitives",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 15,
 			"title": "Build the utility layer",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 16,
 			"title": "Establish the typographic treatment",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 17,
 			"title": "Add the dark carbon-copy palette",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 18,
 			"title": "Define the exception layer conventions",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
@@ -119,49 +119,49 @@
 		{
 			"number": 20,
 			"title": "Build semver parsing and release-type utilities",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 21,
 			"title": "Model the known-issue lifecycle",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 22,
 			"title": "Build the content query layer",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 23,
 			"title": "Author 30 seed releases spanning v31.0.0 to v34.2.1",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 24,
 			"title": "Build the core content blocks",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 25,
 			"title": "Build the release detail page",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 26,
 			"title": "Build the paginated release archive",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 27,
 			"title": "Build the home page",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
@@ -173,37 +173,37 @@
 		{
 			"number": 29,
 			"title": "Build the tag index and tag detail pages",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 30,
 			"title": "Build the change-type pages",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 31,
 			"title": "Build the Known Issues tracker",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 32,
 			"title": "Build the stats dashboard",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 33,
 			"title": "Build the release cadence heatmap",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 34,
 			"title": "Generate the RSS feed",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
@@ -215,7 +215,7 @@
 		{
 			"number": 36,
 			"title": "Configure Stylelint with CUBE layer rules",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
@@ -227,7 +227,7 @@
 		{
 			"number": 38,
 			"title": "Add Lighthouse CI with performance and accessibility budgets",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
@@ -257,49 +257,49 @@
 		{
 			"number": 43,
 			"title": "Establish the requirement traceability convention",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 44,
 			"title": "Unit-test the semver and known-issue models",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 45,
 			"title": "Test content schema invariants and the query layer",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 46,
 			"title": "E2E: core page journeys",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 47,
 			"title": "E2E: aggregate views and the known-issue lifecycle",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 48,
 			"title": "Automated accessibility tests with axe-core",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 49,
 			"title": "Guardrail tests: zero-JS budget and CUBE cascade integrity",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 50,
 			"title": "Visual regression snapshots in both colour schemes",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
