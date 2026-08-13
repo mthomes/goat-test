@@ -1,14 +1,15 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE } from "../lib/site.ts";
 
 // Placeholder listing that proves collection types flow through to templates.
 // The real home page arrives with #27.
 const releases = await getCollection("releases");
 ---
 
-<BaseLayout title="goat-test">
-	<h1>goat-test</h1>
+<BaseLayout title={SITE.name} description={SITE.description}>
+	<h1>{SITE.name}</h1>
 	<ul>
 		{
 			releases.map((release) => (

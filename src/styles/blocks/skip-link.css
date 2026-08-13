@@ -1,0 +1,27 @@
+/* The first focusable element on every page. Hidden until it has focus, then
+ * printed as a tab sticking out of the top corner of the page. */
+@layer block {
+	.skip-link {
+		position: absolute;
+		z-index: 1;
+		inset-block-start: 0;
+		inset-inline-start: 0;
+		padding: var(--space-2xs) var(--space-xs);
+		border: var(--border-width) solid var(--colour-accent);
+		background-color: var(--colour-paper);
+		color: var(--colour-accent);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.skip-link:not(:focus) {
+		position: absolute;
+		overflow: hidden;
+		clip-path: inset(50%);
+		inline-size: 1px;
+		block-size: 1px;
+		white-space: nowrap;
+	}
+}
