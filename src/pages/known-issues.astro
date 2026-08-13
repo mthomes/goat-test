@@ -1,0 +1,78 @@
+---
+/**
+ * A standing page of everything still broken.
+ *
+ * Open first, longest-open at the top, because the age of the oldest one is
+ * the whole point. Open versus resolved is expressed by `data-state` and
+ * styled from the exception layer, not by two different blocks or by ad-hoc
+ * styling here.
+ */
+import KnownIssueItem from "../components/KnownIssueItem.astro";
+import MetadataTable from "../components/MetadataTable.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { pluralise } from "../lib/format.ts";
+import { getKnownIssues } from "../lib/queries.ts";
+
+const { all, open, resolved } = await getKnownIssues();
+const longest = open[0];
+---
+
+<BaseLayout
+	title="Known Issues"
+	description={`${open.length} still open, ${resolved.length} since resolved. The oldest has been open for ${longest ? pluralise(longest.ageInReleases, "release") : "no releases"}.`}
+>
+	<div class="wrapper region stack">
+		<header class="stack flow-space-2xs">
+			<h1>Known Issues</h1>
+			<p class="archive__count">
+				{pluralise(all.length, "issue")} on record — {open.length} still open
+			</p>
+		</header>
+
+		<MetadataTable
+			label="Known-issue summary"
+			rows={[
+				{ label: "Open", value: String(open.length) },
+				{ label: "Resolved", value: String(resolved.length) },
+				{
+					label: "Longest open",
+					value: longest
+						? `${pluralise(longest.ageInReleases, "release")}, since v${longest.openedIn}`
+						: "—",
+				},
+			]}
+		/>
+
+		<section class="stack flow-space-xs">
+			<h2 class="change-list__label">Open</h2>
+			{
+				open.length === 0 ? (
+					<p class="archive__empty">Nothing is broken. This has never happened.</p>
+				) : (
+					<div class="stack flow-space-s">
+						{open.map((issue) => (
+							<KnownIssueItem issue={issue} headingLevel={3} />
+						))}
+					</div>
+				)
+			}
+		</section>
+
+		<section class="stack flow-space-xs">
+			<h2 class="change-list__label">Resolved</h2>
+			{
+				resolved.length === 0 ? (
+					<p class="archive__empty">
+						Nothing has been resolved yet. Everything opened is still open.
+					</p>
+				) : (
+					<div class="stack flow-space-s">
+						{resolved.map((issue) => (
+							<KnownIssueItem issue={issue} headingLevel={3} />
+						))}
+					</div>
+				)
+			}
+		</section>
+	</div>
+</BaseLayout>
