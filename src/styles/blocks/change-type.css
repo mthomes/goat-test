@@ -1,0 +1,37 @@
+/* A change-type page: the type's own sigil beside its name, and a row of
+ * cross-links to the others. */
+@layer block {
+	.change-type__title {
+		max-inline-size: none;
+		font-family: var(--font-mono);
+		font-size: var(--step-4);
+		letter-spacing: var(--tracking-tight);
+	}
+
+	.change-type__title::before {
+		content: var(--sigil, "");
+		padding-inline-end: var(--space-2xs);
+		color: var(--colour-accent);
+	}
+
+	.change-type__cross {
+		--cluster-gap: var(--space-3xs) var(--space-s);
+
+		padding-block: var(--space-2xs);
+		border-block: var(--rule-line);
+		color: var(--colour-ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+	}
+
+	.change-type__cross a::before {
+		content: var(--sigil, "");
+		padding-inline-end: var(--space-3xs);
+		color: var(--colour-accent);
+	}
+
+	.changes-note {
+		color: var(--colour-ink-muted);
+		font-size: var(--step-down-1);
+	}
+}
