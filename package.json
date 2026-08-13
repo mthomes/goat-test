@@ -19,7 +19,8 @@
     "trace:sync": "node scripts/sync-requirements.mjs",
     "validate:feed": "node scripts/validate-feed.mjs",
     "test:guardrails": "npm run build && vitest run --config vitest.guardrails.config.ts",
-    "lint:css": "stylelint \"src/**/*.css\""
+    "lint:css": "stylelint \"src/**/*.css\"",
+    "test:lighthouse": "npm run build && lhci autorun --config=lighthouserc.cjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
@@ -33,6 +34,8 @@
   "description": "Release notes for a person.",
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.62.1",
     "@types/node": "^26.2.0",
     "@vitest/coverage-v8": "^4.1.10",

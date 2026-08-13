@@ -33,10 +33,13 @@
 		color: var(--colour-accent);
 	}
 
-	/* A step that has nowhere to go is printed and struck through rather than
-	 * removed, so the control keeps its shape at both ends of the run. */
+	/* A step that has nowhere to go is still printed, so the control keeps its
+	 * shape at both ends of the run. It stays in the muted ink rather than
+	 * dropping to a rule tone: rule tones clear 3:1 for boundaries, not the
+	 * 4.5:1 text needs, and this is text. It reads as inactive because it is
+	 * not a link, which is a difference a screen reader gets too. */
 	.pagination__spent {
-		color: var(--colour-rule-strong);
+		color: var(--colour-ink-muted);
 	}
 
 	.pagination__page[aria-current="page"] {

@@ -10,7 +10,9 @@
 	.stats__position {
 		display: inline-block;
 		min-inline-size: var(--space-s);
-		color: var(--colour-rule-strong);
+		/* Muted ink, not a rule tone: this is text, and rule tones are only
+		 * built to clear 3:1. */
+		color: var(--colour-ink-muted);
 		font-family: var(--font-mono);
 		font-size: var(--step-down-1);
 		font-variant-numeric: tabular-nums;

@@ -1,0 +1,91 @@
+name: Lighthouse
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: lighthouse-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  lighthouse:
+    name: Budgets
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      # Audits a production build served by `astro preview` — the same artefact
+      # the deploy publishes. None of these numbers mean anything against a dev
+      # server.
+      - name: Lighthouse CI
+        id: lighthouse
+        run: npm run test:lighthouse
+
+      - name: Summarise
+        if: always()
+        run: |
+          {
+            echo "## Lighthouse"
+            echo
+            echo "| Route | Performance | Accessibility | Best practices | SEO | JS bytes |"
+            echo "| ----- | ----------: | ------------: | -------------: | --: | -------: |"
+            node -e '
+              const fs = require("node:fs");
+              const dir = ".lighthouseci";
+              if (!fs.existsSync(dir)) { console.log("| _no reports_ | | | | | |"); process.exit(0); }
+              for (const file of fs.readdirSync(dir).filter((n) => n.includes("lhr") && n.endsWith(".json")).sort()) {
+                const r = JSON.parse(fs.readFileSync(`${dir}/${file}`, "utf8"));
+                const pct = (c) => Math.round((r.categories[c]?.score ?? 0) * 100);
+                const js = r.audits["resource-summary"]?.details?.items?.find((i) => i.resourceType === "script");
+                console.log(`| \`${new URL(r.finalDisplayedUrl).pathname}\` | ${pct("performance")} | ${pct("accessibility")} | ${pct("best-practices")} | ${pct("seo")} | ${js ? js.transferSize : 0} |`);
+              }
+            '
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # The failure detail, on the PR, without having to open the run.
+      - name: Report failures
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("node:fs");
+            const dir = ".lighthouseci";
+            const rows = [];
+            if (fs.existsSync(dir)) {
+              for (const file of fs.readdirSync(dir).filter((n) => n.includes("lhr") && n.endsWith(".json")).sort()) {
+                const r = JSON.parse(fs.readFileSync(`${dir}/${file}`, "utf8"));
+                const pct = (c) => Math.round((r.categories[c]?.score ?? 0) * 100);
+                const failures = Object.values(r.audits)
+                  .filter((a) => a.score !== null && a.score < 1 && a.scoreDisplayMode !== "informative")
+                  .map((a) => a.title);
+                rows.push(`- \`${new URL(r.finalDisplayedUrl).pathname}\` — perf ${pct("performance")}, a11y ${pct("accessibility")}, bp ${pct("best-practices")}\n  - ${failures.slice(0, 6).join("\n  - ") || "no failing audits"}`);
+              }
+            }
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `### Lighthouse budgets failed\n\n${rows.join("\n") || "No reports were produced."}`,
+            });
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 7

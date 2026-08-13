@@ -15,10 +15,13 @@
 		text-decoration-color: var(--colour-rule);
 	}
 
+	/* The slash is a typographic tick rather than information, but it is still
+	 * text, so it takes a text tone rather than a rule tone. Separation comes
+	 * from the space and the underline, not from a contrast drop. */
 	.tag-list__tag::before {
 		content: "/";
 		padding-inline-end: var(--space-3xs);
-		color: var(--colour-rule-strong);
+		color: var(--colour-ink-muted);
 	}
 
 	.tag-list__tag:hover,
