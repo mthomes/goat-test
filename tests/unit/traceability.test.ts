@@ -83,14 +83,19 @@ describe("@issue-43 requirement traceability", () => {
 	});
 
 	it("flags a tag referencing a non-existent issue", () => {
+		// Assembled rather than written out: the scanner reads *this* file too,
+		// so a bogus tag written literally anywhere in it — including in a
+		// comment explaining why you must not — is reported as a real unknown
+		// tag in the project's own report. Both mistakes were made here first.
+		const bogus = `@issue-${9999}`;
 		const dir = scratchProject(REQUIREMENTS, {
-			"tests/a.spec.ts": `test("typo", { tag: ["@issue-9999"] }, () => {});\n`,
+			"tests/a.spec.ts": `test("typo", { tag: ["${bogus}"] }, () => {});\n`,
 		});
 
 		const { out } = runTrace(dir);
 
 		expect(out).toContain("tag(s) referencing a non-existent issue");
-		expect(out).toContain("@issue-9999");
+		expect(out).toContain(bogus);
 	});
 
 	it("picks up the Vitest describe convention as well as Playwright tags", () => {

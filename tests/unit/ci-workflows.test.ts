@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 /**
@@ -163,6 +163,52 @@ describe("@issue-51 the full suite in CI", () => {
 		expect(contributing).toMatch(/required status check/i);
 		for (const job of ["Lint, types, build", "Unit + coverage", "Guardrails", "Visual regression", "Requirement traceability"]) {
 			expect(contributing, `${job} is not documented`).toContain(job);
+		}
+	});
+});
+
+describe("@issue-39 the Pages deploy", () => {
+	const deploy = readFileSync(".github/workflows/deploy.yml", "utf8");
+
+	it("builds and publishes on push to main", () => {
+		expect(deploy).toMatch(/push:\s*\n\s*branches: \[main\]/);
+		expect(deploy).toContain("actions/upload-pages-artifact");
+		expect(deploy).toContain("actions/deploy-pages");
+		expect(deploy).toContain("path: dist");
+	});
+
+	it("requests exactly the permissions Pages needs", () => {
+		// Read the repo, write the artefact, mint an OIDC token. Nothing else.
+		expect(deploy).toMatch(/permissions:\s*\n\s*contents: read\s*\n\s*pages: write\s*\n\s*id-token: write/);
+	});
+
+	it("serialises deploys and never cancels one mid-flight", () => {
+		// A cancelled deploy can leave the site half-published.
+		expect(deploy).toMatch(/concurrency:\s*\n\s*group: pages\s*\n\s*cancel-in-progress: false/);
+	});
+
+	it("deploys the same build the tests ran against", () => {
+		// `site` and `base` come from astro.config.mjs, not from workflow
+		// inputs, so there is no second copy to get wrong.
+		expect(deploy).toContain("npm run build");
+		expect(deploy).not.toMatch(/--site|--base|ASTRO_BASE/);
+
+		const config = readFileSync("astro.config.mjs", "utf8");
+		expect(config).toMatch(/site:\s*"https:\/\/mthomes\.github\.io"/);
+		expect(config).toMatch(/base:\s*"\/goat-test"/);
+	});
+
+	it("names the environment so the deployed URL is surfaced", () => {
+		expect(deploy).toContain("environment:");
+		expect(deploy).toContain("name: github-pages");
+		expect(deploy).toContain("url: ${{ steps.deployment.outputs.page_url }}");
+	});
+
+	it("emits a 404 and the feeds the deployed host will serve", () => {
+		// What "all routes resolve" needs to be true of the artefact.
+		const built = ["dist/404.html", "dist/rss.xml", "dist/sitemap-index.xml", "dist/robots.txt"];
+		for (const path of built) {
+			expect(existsSync(path), `${path} is not in the build output`).toBe(true);
 		}
 	});
 });
