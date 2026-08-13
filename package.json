@@ -18,7 +18,8 @@
     "trace": "node scripts/trace.mjs",
     "trace:sync": "node scripts/sync-requirements.mjs",
     "validate:feed": "node scripts/validate-feed.mjs",
-    "test:guardrails": "npm run build && vitest run --config vitest.guardrails.config.ts"
+    "test:guardrails": "npm run build && vitest run --config vitest.guardrails.config.ts",
+    "lint:css": "stylelint \"src/**/*.css\""
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
@@ -34,6 +35,8 @@
     "@playwright/test": "^1.62.1",
     "@types/node": "^26.2.0",
     "@vitest/coverage-v8": "^4.1.10",
+    "stylelint": "^17.14.1",
+    "stylelint-config-standard": "^40.0.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10",
     "yaml": "^2.9.0"

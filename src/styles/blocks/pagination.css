@@ -35,7 +35,7 @@
 
 	/* A step that has nowhere to go is printed and struck through rather than
 	 * removed, so the control keeps its shape at both ends of the run. */
-	.pagination__step--spent {
+	.pagination__spent {
 		color: var(--colour-rule-strong);
 	}
 

@@ -18,9 +18,9 @@ describe("@issue-15 utility layer", () => {
 	});
 
 	it("hides accessibly, and gives it back on focus", () => {
-		// The `:not(:focus):not(:focus-within)` guard is the whole point: a
+		// The `:not(:focus, :focus-within)` guard is the whole point: a
 		// skip link hidden unconditionally is not a skip link.
-		expect(css).toContain(".visually-hidden:not(:focus):not(:focus-within)");
+		expect(css).toContain(".visually-hidden:not(:focus, :focus-within)");
 		expect(css).toMatch(/clip-path:\s*inset\(50%\)/);
 	});
 
@@ -77,7 +77,7 @@ describe("@issue-15 utility layer", () => {
 		const multi = rules.filter((rule) => rule.declarations.length > 1);
 		// Only the visually-hidden technique needs more than one declaration.
 		expect(multi.map((rule) => rule.selector)).toEqual([
-			".visually-hidden:not(:focus):not(:focus-within)",
+			".visually-hidden:not(:focus, :focus-within)",
 		]);
 	});
 

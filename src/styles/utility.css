@@ -33,7 +33,7 @@
 	 * The 1×1 box is expressed with `--rule-hairline` because it is the
 	 * thinnest length this project defines and this layer takes no literals.
 	 */
-	.visually-hidden:not(:focus):not(:focus-within) {
+	.visually-hidden:not(:focus, :focus-within) {
 		position: absolute;
 		overflow: hidden;
 		clip-path: inset(50%);

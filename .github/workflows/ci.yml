@@ -32,6 +32,12 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Lint CSS
+        run: npm run lint:css
+
+      - name: Lint style blocks
+        run: npm run lint:style-blocks
+
       - name: astro check
         run: npm run check
 
