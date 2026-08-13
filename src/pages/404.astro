@@ -1,0 +1,45 @@
+---
+/**
+ * A 404 in the register of the rest of the site: a lookup that returned
+ * nothing, reported the way this manual reports everything else.
+ *
+ * Kept short. A 404 that works too hard for the joke is worse than one that
+ * gets out of the way.
+ */
+import MetadataTable from "../components/MetadataTable.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { routes } from "../lib/format.ts";
+import { getStats } from "../lib/queries.ts";
+
+const stats = await getStats();
+---
+
+<BaseLayout
+	title="404"
+	description="No such entry. The requested version is not in this record."
+>
+	<div class="wrapper region stack">
+		<h1 class="release-hero__version">404</h1>
+
+		<MetadataTable
+			label="Lookup result"
+			rows={[
+				{ label: "Status", value: "No such entry" },
+				{ label: "Searched", value: `${stats.totalReleases} releases` },
+				{ label: "Found", value: "0" },
+			]}
+		/>
+
+		<p class="measure">
+			The record has been checked and does not contain whatever you asked for. This
+			is not a known issue; it is a lookup that returned nothing, which is a
+			different and much less interesting kind of nothing.
+		</p>
+
+		<nav class="notfound__links cluster" aria-label="Recovery">
+			<a href={routes.home()}>← Latest release</a>
+			<a href={routes.releases()}>Full archive</a>
+			<a href={routes.knownIssues()}>Known issues</a>
+		</nav>
+	</div>
+</BaseLayout>
