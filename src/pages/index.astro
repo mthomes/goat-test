@@ -1,7 +1,21 @@
 ---
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+
+// Placeholder listing that proves collection types flow through to templates.
+// The real home page arrives with #27.
+const releases = await getCollection("releases");
 ---
 
 <BaseLayout title="goat-test">
 	<h1>goat-test</h1>
+	<ul>
+		{
+			releases.map((release) => (
+				<li>
+					{release.data.version} — {release.data.changes.length} changes
+				</li>
+			))
+		}
+	</ul>
 </BaseLayout>
