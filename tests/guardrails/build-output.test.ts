@@ -313,3 +313,46 @@ describe("@issue-49 source-level constraints", () => {
 		expect(Object.fromEntries(metas.map((m) => [m[2], m[1]]))).toEqual({ light, dark });
 	});
 });
+
+describe("@issue-39 what the deployed host will serve", () => {
+	it("emits the 404, the feed, the sitemap and robots.txt", () => {
+		// GitHub Pages serves `404.html` for any unmatched path, so its absence
+		// would mean the custom 404 exists locally and nowhere else.
+		for (const path of ["404.html", "rss.xml", "sitemap-index.xml", "robots.txt"]) {
+			expect(built, `${path} is not in the build output`).toContain(join(DIST, path));
+		}
+	});
+
+	it("emits every route the navigation links to", () => {
+		for (const route of ["releases", "tags", "changes", "known-issues", "stats"]) {
+			expect(built, `/${route} has no page`).toContain(join(DIST, route, "index.html"));
+		}
+	});
+
+	it("ships every asset the pages reference", () => {
+		// A root-relative reference that resolves locally but not on the host is
+		// the classic project-Pages failure; the base guardrail above covers the
+		// prefix, this covers the file being there at all.
+		const config = readFileSync("astro.config.mjs", "utf8");
+		const base = /base:\s*"([^"]+)"/.exec(config)![1];
+
+		const referenced = new Set<string>();
+		for (const path of htmlFiles) {
+			const html = readFileSync(path, "utf8");
+			// An explicit extension list, not "anything with a dot": a version
+			// like /releases/34.2.0 looks exactly like a filename otherwise.
+			for (const [, value] of html.matchAll(
+				/(?:href|src)="(\/[^"#?]*\.(?:css|js|mjs|svg|png|jpe?g|webp|avif|ico|woff2?|xml|txt|json))"/g,
+			)) {
+				referenced.add(value);
+			}
+		}
+
+		expect(referenced.size).toBeGreaterThan(3);
+		for (const value of referenced) {
+			expect(built, `${value} is referenced but not built`).toContain(
+				join(DIST, value.slice(base.length)),
+			);
+		}
+	});
+});

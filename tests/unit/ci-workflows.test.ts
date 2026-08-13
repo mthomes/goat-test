@@ -166,3 +166,41 @@ describe("@issue-51 the full suite in CI", () => {
 		}
 	});
 });
+
+describe("@issue-39 the Pages deploy", () => {
+	const deploy = readFileSync(".github/workflows/deploy.yml", "utf8");
+
+	it("builds and publishes on push to main", () => {
+		expect(deploy).toMatch(/push:\s*\n\s*branches: \[main\]/);
+		expect(deploy).toContain("actions/upload-pages-artifact");
+		expect(deploy).toContain("actions/deploy-pages");
+		expect(deploy).toContain("path: dist");
+	});
+
+	it("requests exactly the permissions Pages needs", () => {
+		// Read the repo, write the artefact, mint an OIDC token. Nothing else.
+		expect(deploy).toMatch(/permissions:\s*\n\s*contents: read\s*\n\s*pages: write\s*\n\s*id-token: write/);
+	});
+
+	it("serialises deploys and never cancels one mid-flight", () => {
+		// A cancelled deploy can leave the site half-published.
+		expect(deploy).toMatch(/concurrency:\s*\n\s*group: pages\s*\n\s*cancel-in-progress: false/);
+	});
+
+	it("deploys the same build the tests ran against", () => {
+		// `site` and `base` come from astro.config.mjs, not from workflow
+		// inputs, so there is no second copy to get wrong.
+		expect(deploy).toContain("npm run build");
+		expect(deploy).not.toMatch(/--site|--base|ASTRO_BASE/);
+
+		const config = readFileSync("astro.config.mjs", "utf8");
+		expect(config).toMatch(/site:\s*"https:\/\/mthomes\.github\.io"/);
+		expect(config).toMatch(/base:\s*"\/goat-test"/);
+	});
+
+	it("names the environment so the deployed URL is surfaced", () => {
+		expect(deploy).toContain("environment:");
+		expect(deploy).toContain("name: github-pages");
+		expect(deploy).toContain("url: ${{ steps.deployment.outputs.page_url }}");
+	});
+});
