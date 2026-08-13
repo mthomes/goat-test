@@ -1,0 +1,33 @@
+/* An issue and the span it has stood for. Open versus resolved comes from the
+ * exception layer via `data-state`; this block only knows there is a state. */
+@layer block {
+	.known-issue {
+		padding-inline-start: var(--space-s);
+		border-inline-start: var(--state-rule, var(--rule-line));
+	}
+
+	.known-issue__text {
+		max-inline-size: var(--measure);
+		font-family: var(--font-serif);
+		font-size: var(--step-0);
+		font-weight: var(--font-weight-regular);
+		letter-spacing: normal;
+		line-height: var(--leading-body);
+	}
+
+	.known-issue__span {
+		--cluster-gap: var(--space-3xs) var(--space-2xs);
+
+		max-inline-size: none;
+		color: var(--colour-ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.known-issue__resolution {
+		max-inline-size: var(--measure);
+		color: var(--colour-ink-muted);
+		font-size: var(--step-down-1);
+	}
+}

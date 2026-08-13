@@ -1,0 +1,30 @@
+/* The revision table off the front of a manual: labels in small-caps mono,
+ * values in tabular mono, a hairline between every row. */
+@layer block {
+	.metadata-table {
+		border-block-start: var(--rule-line-strong);
+	}
+
+	.metadata-table__row {
+		display: grid;
+		grid-template-columns: minmax(var(--metadata-label-width, var(--layout-label-column)), auto) 1fr;
+		gap: var(--space-2xs) var(--space-s);
+		padding-block: var(--space-2xs);
+		border-block-end: var(--rule-line);
+	}
+
+	.metadata-table__label {
+		color: var(--colour-ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		font-variant-caps: all-small-caps;
+		letter-spacing: var(--tracking-label);
+	}
+
+	.metadata-table__value {
+		margin: 0;
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		font-variant-numeric: tabular-nums;
+	}
+}

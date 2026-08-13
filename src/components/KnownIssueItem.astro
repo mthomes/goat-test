@@ -1,0 +1,51 @@
+---
+/**
+ * Block: known-issue-item. The text, and the span it has been open for.
+ *
+ * Open versus resolved is expressed by `data-state` and styled by the
+ * exception layer — the same object in two states, not two blocks.
+ */
+import { pluralise, routes } from "../lib/format.ts";
+import type { KnownIssue } from "../lib/queries.ts";
+import TagList from "./TagList.astro";
+
+interface Props {
+	issue: KnownIssue;
+	headingLevel?: 3 | 4;
+}
+
+const { issue, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as "h3";
+---
+
+<article class="known-issue stack flow-space-2xs" data-state={issue.status} id={issue.id}>
+	<Heading class="known-issue__text">{issue.text}</Heading>
+
+	<p class="known-issue__span cluster">
+		<span>
+			Opened in <a href={routes.release(issue.openedIn)}>v{issue.openedIn}</a>
+		</span>
+
+		{
+			issue.status === "resolved" ? (
+				<>
+					<span aria-hidden="true">→</span>
+					<span>
+						resolved in <a href={routes.release(issue.resolvedIn!)}>v{issue.resolvedIn}</a>
+						{" after "}
+						{pluralise(issue.ageInReleases, "release")}
+					</span>
+				</>
+			) : (
+				<>
+					<span aria-hidden="true">·</span>
+					<span>open for {pluralise(issue.ageInReleases, "release")}</span>
+				</>
+			)
+		}
+	</p>
+
+	{issue.resolvedBy && <p class="known-issue__resolution">{issue.resolvedBy}</p>}
+
+	<TagList tags={issue.tags} label="Tags for this known issue" />
+</article>

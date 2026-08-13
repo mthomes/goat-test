@@ -148,6 +148,7 @@
 		--layout-gutter: var(--space-s-m);
 		--layout-sidebar: 18rem;
 		--layout-grid-min: 18rem;
+		--layout-label-column: 10rem;
 
 		/* ---------------------------------------------- rules and borders --
 		 *

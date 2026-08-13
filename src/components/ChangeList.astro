@@ -1,0 +1,40 @@
+---
+/**
+ * Block: change-list. Changes grouped by type, each group under a small-caps
+ * label, in the stable order the change-type enum declares.
+ */
+import { changeTypeLabel } from "../lib/format.ts";
+import type { ChangeGroup } from "../lib/queries.ts";
+import ChangeEntry from "./ChangeEntry.astro";
+
+interface Props {
+	groups: readonly ChangeGroup[];
+	/** Heading level to use for the group labels. */
+	headingLevel?: 2 | 3 | 4;
+	/** Known-issue id → the release page it opened in. */
+	openedIn?: Record<string, { version: string; href: string }>;
+}
+
+const { groups, headingLevel = 3, openedIn = {} } = Astro.props;
+const Heading = `h${headingLevel}` as "h3";
+---
+
+<div class="change-list stack">
+	{
+		groups.map((group) => (
+			<section class="change-list__group stack flow-space-xs">
+				<Heading class="change-list__label">{changeTypeLabel(group.type)}</Heading>
+				<ul class="change-list__entries stack flow-space-xs" role="list">
+					{group.changes.map((change) => (
+						<ChangeEntry
+							change={change}
+							resolvesHref={change.resolves
+								.map((id) => openedIn[id])
+								.filter((target) => target !== undefined)}
+						/>
+					))}
+				</ul>
+			</section>
+		))
+	}
+</div>
