@@ -70,7 +70,15 @@ describe("@issue-24 core content blocks", () => {
 		// it may not re-implement a primitive.
 		const arrangesNothingGeneral = new Set(["MetadataTable.astro"]);
 
-		for (const { name, source } of components.filter((c) => !arrangesNothingGeneral.has(c.name))) {
+		// A component that emits no classes at all has no layout to compose.
+		// SeoTags is the case: it renders <meta> and <link> into the head.
+		const arranges = components.filter(
+			(component) =>
+				component.source.includes('class="') && !arrangesNothingGeneral.has(component.name),
+		);
+		expect(arranges.length).toBeGreaterThan(4);
+
+		for (const { name, source } of arranges) {
 			const classes = [...source.matchAll(/class="([^"]*)"/g)].flatMap((m) => m[1].split(/\s+/));
 			expect(
 				classes.some((c) => COMPOSITION.includes(c)),
