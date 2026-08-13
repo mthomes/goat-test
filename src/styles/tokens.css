@@ -186,4 +186,55 @@
 		--sigil-deprecated: "\2020";
 		--sigil-known-issue: "\2021";
 	}
+
+	/* ==================================================================
+	 * The carbon copy
+	 * ==================================================================
+	 *
+	 * Dark mode via `prefers-color-scheme` only. No toggle, no persistence,
+	 * no flash of the wrong theme — and no JavaScript, because there is
+	 * nowhere for any to run.
+	 *
+	 * Only *values* change. Every token name below already exists above, so
+	 * no other layer has a dark-mode branch: if one ever needs a branch, a
+	 * token is missing and this is where to add it.
+	 *
+	 * The palette is a carbon copy rather than an inversion. Inverting cream
+	 * paper gives a flat blue-grey that reads as a website with the lights
+	 * off. A carbon flimsy is a cool blue-black impression on thin stock:
+	 * the ground goes blue-black, the text goes to the slightly cool
+	 * off-white of a second sheet, and nothing is pure white or pure black.
+	 *
+	 * Contrast, re-measured for the dark ground:
+	 *
+	 *   ink        on paper        13.55:1   AAA
+	 *   ink-muted  on paper         6.74:1   AA
+	 *   accent     on paper         6.60:1   AA
+	 *   ink        on paper-inset  12.11:1   AAA
+	 *   ink-muted  on paper-inset   6.02:1   AA
+	 *   accent     on paper-inset   5.90:1   AA
+	 * ================================================================== */
+
+	@media (prefers-color-scheme: dark) {
+		:root {
+			--colour-paper: #131a21;
+			--colour-paper-inset: #1c242d;
+			--colour-ink: #dde3e8;
+			--colour-ink-muted: #96a2ad;
+
+			/* Oxblood is a dark pigment on light stock. Reused verbatim here it
+			 * would sit at 1.4:1 against the ground and disappear. Re-tuned to
+			 * the same hue lifted and desaturated — the colour oxblood *reads*
+			 * as, once it is the lighter of the two. */
+			--colour-accent: #d98a80;
+
+			/* A hairline that reads correctly on cream is far too loud on a
+			 * dark ground: light-on-dark edges bloom. The rules are dimmed
+			 * relative to the ground, and the heavy rule drops a full weight —
+			 * 3px of near-white is a bar, not a rule. */
+			--colour-rule: #2b343e;
+			--colour-rule-strong: #606c79;
+			--rule-heavy: var(--rule-medium);
+		}
+	}
 }

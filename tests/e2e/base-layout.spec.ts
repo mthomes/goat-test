@@ -29,10 +29,12 @@ test.describe("base layout", () => {
 
 	test("sets a favicon and a theme colour", { tag: ["@issue-10"] }, async ({ page }) => {
 		await expect(page.locator('head link[rel="icon"]')).toHaveAttribute("href", "/favicon.svg");
-		await expect(page.locator('head meta[name="theme-color"]')).toHaveAttribute(
-			"content",
-			/^#[0-9a-f]{6}$/,
-		);
+		const themeColours = page.locator('head meta[name="theme-color"]');
+		await expect(themeColours).toHaveCount(2);
+		for (const meta of await themeColours.all()) {
+			await expect(meta).toHaveAttribute("content", /^#[0-9a-f]{6}$/);
+			await expect(meta).toHaveAttribute("media", /prefers-color-scheme: (light|dark)/);
+		}
 		expect((await page.request.get("/favicon.svg")).status()).toBe(200);
 	});
 

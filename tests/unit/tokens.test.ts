@@ -80,3 +80,82 @@ describe("@issue-12 token layer", () => {
 		}
 	});
 });
+
+describe("@issue-17 dark carbon-copy palette", () => {
+	const light = colourTokens("root");
+	const dark = colourTokens("dark");
+
+	it("redefines values without adding or renaming a single token", () => {
+		expect(Object.keys(dark).length).toBeGreaterThan(0);
+		for (const name of Object.keys(dark)) {
+			expect(light, `${name} is dark-only — token names must not change`).toHaveProperty(name);
+		}
+	});
+
+	it.each(
+		GROUNDS.flatMap((ground) => TEXTS.map((text) => [text, ground] as const)),
+	)("clears WCAG AA in dark: %s on %s", (text, ground) => {
+		expect(contrast(dark[text], dark[ground])).toBeGreaterThanOrEqual(4.5);
+	});
+
+	it("keeps the strong rule tone at 3:1 in dark too", () => {
+		expect(contrast(dark["--colour-rule-strong"], dark["--colour-paper"]))
+			.toBeGreaterThanOrEqual(3);
+	});
+
+	it("reads as a carbon copy, not an inversion of the light palette", () => {
+		const channels = (hex: string) =>
+			hex.replace("#", "").match(/../g)!.map((pair) => parseInt(pair, 16));
+
+		const hue = (hex: string) => {
+			const [r, g, b] = channels(hex).map((c) => c / 255);
+			return ((Math.atan2(Math.sqrt(3) * (g - b), 2 * r - g - b) * 180) / Math.PI + 360) % 360;
+		};
+		const hueGap = (a: number, b: number) => Math.min(Math.abs(a - b), 360 - Math.abs(a - b));
+
+		// The tell of a naive inversion is the accent: 255 minus oxblood is a
+		// mint green. A carbon copy keeps the pigment and changes the paper.
+		const invertedAccent = `#${channels(light["--colour-accent"])
+			.map((c) => (255 - c).toString(16).padStart(2, "0")).join("")}`;
+		expect(hueGap(hue(light["--colour-accent"]), hue(dark["--colour-accent"]))).toBeLessThan(30);
+		expect(hueGap(hue(light["--colour-accent"]), hue(invertedAccent))).toBeGreaterThan(120);
+
+		// Cream is warm (red channel highest); the carbon ground is cool
+		// (blue channel highest). That reversal is the palette, not a tint.
+		const [lr, , lb] = channels(light["--colour-paper"]);
+		const [dr, , db] = channels(dark["--colour-paper"]);
+		expect(lr).toBeGreaterThan(lb);
+		expect(db).toBeGreaterThan(dr);
+
+		// A carbon flimsy is an impression on stock, not a void. Nothing is
+		// pure black or pure white, and the ground is lifted clear of zero.
+		expect(dark["--colour-paper"]).not.toBe("#000000");
+		expect(dark["--colour-ink"]).not.toBe("#ffffff");
+		expect(Math.min(...channels(dark["--colour-paper"]))).toBeGreaterThan(8);
+		expect(Math.max(...channels(dark["--colour-ink"]))).toBeLessThan(245);
+	});
+
+	it("re-tunes the accent rather than reusing it verbatim", () => {
+		expect(dark["--colour-accent"]).not.toBe(light["--colour-accent"]);
+		// Light-mode oxblood on the carbon ground would be all but invisible.
+		expect(contrast(light["--colour-accent"], dark["--colour-paper"])).toBeLessThan(3);
+		expect(contrast(dark["--colour-accent"], dark["--colour-paper"])).toBeGreaterThanOrEqual(4.5);
+	});
+
+	it("re-weights rules and borders for the dark ground", () => {
+		// Rules are dimmed relative to their ground: light-on-dark edges bloom,
+		// so a hairline tuned for cream is too loud here.
+		expect(contrast(dark["--colour-rule"], dark["--colour-paper"]))
+			.toBeLessThan(contrast(light["--colour-rule"], light["--colour-paper"]));
+
+		// And the heavy rule drops a weight — 3px of near-white is a bar.
+		const darkBlock = stripComments(readFileSync("src/styles/tokens.css", "utf8"))
+			.slice(css.indexOf("@media (prefers-color-scheme: dark)"));
+		expect(darkBlock).toContain("--rule-heavy: var(--rule-medium)");
+	});
+
+	it("involves no JavaScript at all", () => {
+		expect(css).not.toMatch(/\bscript\b/i);
+		expect(css).toContain("@media (prefers-color-scheme: dark)");
+	});
+});
