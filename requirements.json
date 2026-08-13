@@ -1,47 +1,47 @@
 {
 	"repo": "mthomes/goat-test",
-	"syncedAt": "2026-08-13T17:54:25.417Z",
+	"syncedAt": "2026-08-13T18:24:08.168Z",
 	"issues": [
 		{
 			"number": 1,
 			"title": "Epic: Foundation & Tooling",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": true
 		},
 		{
 			"number": 2,
 			"title": "Epic: Design System (CUBE)",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": true
 		},
 		{
 			"number": 3,
 			"title": "Epic: Content Model",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": true
 		},
 		{
 			"number": 4,
 			"title": "Epic: Core Pages",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": true
 		},
 		{
 			"number": 5,
 			"title": "Epic: Aggregate Views",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": true
 		},
 		{
 			"number": 6,
 			"title": "Epic: Feeds & SEO",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": true
 		},
 		{
 			"number": 7,
 			"title": "Epic: Infrastructure & Quality",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": true
 		},
 		{
@@ -167,7 +167,7 @@
 		{
 			"number": 28,
 			"title": "Build the 404 page",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
@@ -209,7 +209,7 @@
 		{
 			"number": 35,
 			"title": "Add sitemap, canonical URLs and Open Graph metadata",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
@@ -233,13 +233,13 @@
 		{
 			"number": 39,
 			"title": "Add the GitHub Pages deploy workflow",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		},
 		{
 			"number": 40,
 			"title": "Epic: Testing & Verification",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": true
 		},
 		{
@@ -305,7 +305,7 @@
 		{
 			"number": 51,
 			"title": "Wire the full suite into CI with coverage and traceability reporting",
-			"state": "OPEN",
+			"state": "CLOSED",
 			"epic": false
 		}
 	]
