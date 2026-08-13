@@ -46,6 +46,9 @@
 	}
 
 	html {
+		/* stylelint-disable-next-line property-no-vendor-prefix --
+		 * iOS Safari still only honours the prefixed property, and the
+		 * unprefixed one below does nothing there. */
 		-webkit-text-size-adjust: none;
 		text-size-adjust: none;
 	}
