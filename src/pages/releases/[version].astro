@@ -1,0 +1,133 @@
+---
+/**
+ * The canonical view of a single release.
+ *
+ * Cross-linking a resolution back to where the issue opened is what makes the
+ * known-issue thread legible to a reader who arrived here from a search engine
+ * and has never seen another page on this site.
+ */
+import type { GetStaticPaths } from "astro";
+
+import ChangeList from "../../components/ChangeList.astro";
+import KnownIssueItem from "../../components/KnownIssueItem.astro";
+import MetadataTable from "../../components/MetadataTable.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { formatDate, isoDate, pluralise, releaseTypeLabel, routes } from "../../lib/format.ts";
+import {
+	getAllReleases,
+	getKnownIssues,
+	getReleaseBody,
+	type KnownIssue,
+	type Release,
+} from "../../lib/queries.ts";
+
+export const getStaticPaths = (async () => {
+	const releases = await getAllReleases();
+	const { all: knownIssues } = await getKnownIssues();
+
+	return releases.map((release) => ({
+		params: { version: release.version },
+		props: { release, knownIssues },
+	}));
+}) satisfies GetStaticPaths;
+
+interface Props {
+	release: Release;
+	knownIssues: readonly KnownIssue[];
+}
+
+const { release, knownIssues } = Astro.props;
+const Body = await getReleaseBody(release.version);
+
+// Known issues this release opened, rendered with their state as it stands
+// now rather than as it stood then — a reader wants to know whether the thing
+// is still broken, not what was true in 2021.
+const openedHere = knownIssues.filter((issue) => issue.openedIn === release.version);
+
+// Where each known issue was opened, so a change that resolves one can link
+// back to it.
+const openedIn = Object.fromEntries(
+	knownIssues.map((issue) => [
+		issue.id,
+		{ version: issue.openedIn, href: `${routes.release(issue.openedIn)}#${issue.id}` },
+	]),
+);
+
+const changeGroups = release.changesByType.filter((group) => group.type !== "known-issue");
+
+const description = release.summary
+	?? `Release ${release.version}: ${pluralise(release.changes.length, "change")} on ${formatDate(release.released)}.`;
+---
+
+<BaseLayout title={`v${release.version}`} description={description}>
+	<div class="wrapper region stack">
+		<header class="release-hero stack flow-space-xs">
+			<h1 class="release-hero__version" data-release-type={release.releaseType}>
+				v{release.version}
+			</h1>
+
+			<MetadataTable
+				label={`Metadata for release ${release.version}`}
+				rows={[
+					{
+						label: "Released",
+						value: formatDate(release.released),
+						datetime: isoDate(release.released),
+					},
+					{ label: "Type", value: releaseTypeLabel(release.releaseType) },
+					{ label: "Changes", value: pluralise(release.changes.length, "entry", "entries") },
+					{
+						label: "Known issues",
+						value: openedHere.length > 0 ? pluralise(openedHere.length, "opened") : "None opened",
+					},
+				]}
+			/>
+		</header>
+
+		{release.summary && <p class="release-summary measure">{release.summary}</p>}
+
+		{Body && (
+			<div class="release-body stack measure">
+				<Body />
+			</div>
+		)}
+
+		<ChangeList groups={changeGroups} headingLevel={2} openedIn={openedIn} />
+
+		{
+			openedHere.length > 0 && (
+				<section class="stack flow-space-xs">
+					<h2 class="change-list__label">Known issues</h2>
+					<div class="stack flow-space-xs">
+						{openedHere.map((issue) => (
+							<KnownIssueItem issue={issue} headingLevel={3} />
+						))}
+					</div>
+				</section>
+			)
+		}
+
+		<nav class="release-nav repel" aria-label="Release navigation">
+			{
+				release.previous ? (
+					<a class="release-nav__link" rel="prev" href={routes.release(release.previous)}>
+						<span class="release-nav__direction">Previous</span>
+						<span class="release-nav__version">v{release.previous}</span>
+					</a>
+				) : (
+					<span class="release-nav__end">Earliest release</span>
+				)
+			}
+			{
+				release.next ? (
+					<a class="release-nav__link release-nav__link--next" rel="next" href={routes.release(release.next)}>
+						<span class="release-nav__direction">Next</span>
+						<span class="release-nav__version">v{release.next}</span>
+					</a>
+				) : (
+					<span class="release-nav__end">Latest release</span>
+				)
+			}
+		</nav>
+	</div>
+</BaseLayout>

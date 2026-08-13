@@ -6,7 +6,7 @@
  * off it. That is the seam that keeps the aggregate-view pages trivial — each
  * of them should be a template over a single call from here.
  */
-import { getCollection } from "astro:content";
+import { getCollection, getEntry, render } from "astro:content";
 
 import {
 	buildIndex,
@@ -84,6 +84,20 @@ export async function getChangesByType(type: ChangeType): Promise<readonly Chang
 export async function getKnownIssues(): Promise<KnownIssueSummary> {
 	const { knownIssues, openKnownIssues, resolvedKnownIssues } = await index();
 	return { all: knownIssues, open: openKnownIssues, resolved: resolvedKnownIssues };
+}
+
+/**
+ * The rendered markdown body of a release, when it has one.
+ *
+ * Pages read their prose through here rather than reaching for `getEntry`
+ * themselves, so `astro:content` stays behind this one module.
+ */
+export async function getReleaseBody(version: string) {
+	const entry = await getEntry("releases", version);
+	if (entry === undefined) return undefined;
+
+	const { Content } = await render(entry);
+	return entry.body?.trim() ? Content : undefined;
 }
 
 /** Aggregate figures over the whole history. Nothing on /stats is computed twice. */
