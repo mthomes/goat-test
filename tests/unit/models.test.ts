@@ -161,12 +161,24 @@ describe("@issue-44 known-issue resolution over the seed range", () => {
 });
 
 describe("@issue-44 the two build-failure conditions", () => {
+	/** A deeply mutable clone, so a test can corrupt one field of it. */
+	interface MutableRelease {
+		version: string;
+		released: Date;
+		changes: { type: string; text: string; id?: string; resolves?: string[] }[];
+	}
+
 	/** The real corpus with one change swapped, so the fixture is the site's own data. */
-	function corruptSeed(mutate: (releases: ReleaseLike[]) => void): ReleaseLike[] {
-		const copy = seed.map((release) => ({
+	function corruptSeed(mutate: (releases: MutableRelease[]) => void): ReleaseLike[] {
+		const copy: MutableRelease[] = seed.map((release) => ({
 			version: release.version,
 			released: release.released,
-			changes: release.changes.map((change) => ({ ...change })),
+			changes: release.changes.map((change) => ({
+				type: change.type,
+				text: change.text,
+				id: change.id,
+				resolves: change.resolves ? [...change.resolves] : undefined,
+			})),
 		}));
 		mutate(copy);
 		return copy;
@@ -178,7 +190,7 @@ describe("@issue-44 the two build-failure conditions", () => {
 				release.changes.some((change) => (change.resolves ?? []).length > 0),
 			)!;
 			const change = resolver.changes.find((c) => (c.resolves ?? []).length > 0)!;
-			(change as { resolves: string[] }).resolves = ["no-such-issue"];
+			change.resolves = ["no-such-issue"];
 		});
 
 		expect(() => buildKnownIssues(broken)).toThrow(KnownIssueError);
@@ -193,7 +205,7 @@ describe("@issue-44 the two build-failure conditions", () => {
 			for (const release of releases) {
 				for (const change of release.changes) {
 					if ((change.resolves ?? []).includes(resolved.id)) {
-						(change as { resolves: string[] }).resolves = [];
+						change.resolves = undefined;
 					}
 				}
 			}
