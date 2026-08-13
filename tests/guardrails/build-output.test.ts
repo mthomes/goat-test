@@ -339,7 +339,11 @@ describe("@issue-39 what the deployed host will serve", () => {
 		const referenced = new Set<string>();
 		for (const path of htmlFiles) {
 			const html = readFileSync(path, "utf8");
-			for (const [, value] of html.matchAll(/(?:href|src)="(\/[^"#?]*\.[a-z0-9]+)"/g)) {
+			// An explicit extension list, not "anything with a dot": a version
+			// like /releases/34.2.0 looks exactly like a filename otherwise.
+			for (const [, value] of html.matchAll(
+				/(?:href|src)="(\/[^"#?]*\.(?:css|js|mjs|svg|png|jpe?g|webp|avif|ico|woff2?|xml|txt|json))"/g,
+			)) {
 				referenced.add(value);
 			}
 		}
