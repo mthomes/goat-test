@@ -6,6 +6,8 @@
  * Open Graph, canonical URLs and structured data are deliberately absent —
  * they arrive together in #35 so that ticket is reviewable on its own.
  */
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
 import { SITE } from "../lib/site.ts";
 import "../styles/index.css";
 
@@ -56,9 +58,7 @@ const documentTitle = title === SITE.name ? `${SITE.name} · ${SITE.tagline}` : 
 	<body>
 		<a class="skip-link" href="#main">Skip to content</a>
 
-		<header>
-			<p>{SITE.name}</p>
-		</header>
+		<SiteHeader pathname={Astro.url.pathname} />
 
 		<!-- tabindex="-1" so the skip link actually moves focus here, rather
 		     than only moving the scroll position. -->
@@ -66,8 +66,6 @@ const documentTitle = title === SITE.name ? `${SITE.name} · ${SITE.tagline}` : 
 			<slot />
 		</main>
 
-		<footer>
-			<p>{SITE.name} — {SITE.tagline}</p>
-		</footer>
+		<SiteFooter />
 	</body>
 </html>

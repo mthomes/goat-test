@@ -1,0 +1,25 @@
+/* The colophon. What it was set in, when this copy was printed, and where the
+ * plates are kept. */
+@layer block {
+	.site-footer {
+		margin-block-start: var(--space-xl);
+		padding-block: var(--space-m) var(--space-l);
+		border-block-start: var(--rule-line-strong);
+	}
+
+	.site-footer__colophon {
+		max-inline-size: var(--measure);
+		color: var(--colour-ink-muted);
+		font-size: var(--step-down-1);
+	}
+
+	.site-footer__meta {
+		--cluster-gap: var(--space-3xs) var(--space-2xs);
+
+		max-inline-size: none;
+		color: var(--colour-ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		font-variant-numeric: tabular-nums;
+	}
+}

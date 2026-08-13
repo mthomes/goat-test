@@ -1,0 +1,49 @@
+---
+/**
+ * Block: site-header. The running head of a printed manual — the product
+ * name on the left, the section you are in on the right, a rule beneath.
+ *
+ * No menu toggle. With four links there is nothing to collapse, and a
+ * hamburger would need JavaScript this site does not have.
+ */
+import { currentNavItem, NAVIGATION, sectionMarker } from "../lib/navigation.ts";
+import { routes } from "../lib/format.ts";
+import { SITE } from "../lib/site.ts";
+
+interface Props {
+	pathname: string;
+}
+
+const { pathname } = Astro.props;
+const current = currentNavItem(pathname);
+const marker = sectionMarker(pathname);
+---
+
+<header class="site-header">
+	<div class="wrapper stack flow-space-2xs">
+		<div class="site-header__head repel">
+			<p class="site-header__wordmark">
+				<a href={routes.home()}>{SITE.name}</a>
+			</p>
+			<p class="site-header__marker">{marker ?? SITE.tagline}</p>
+		</div>
+
+		<nav class="site-header__nav" aria-label="Primary">
+			<ul class="cluster" role="list">
+				{
+					NAVIGATION.map((item) => (
+						<li>
+							<a
+								class="site-header__link"
+								href={item.href}
+								aria-current={current?.href === item.href ? "page" : undefined}
+							>
+								{item.label}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+	</div>
+</header>
