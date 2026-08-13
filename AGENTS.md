@@ -46,6 +46,20 @@ Written to in this order, resolved in this order. Later layers win.
 | `block` | `src/styles/blocks/*.css` | The site's own components. One file per block, each wrapping itself in `@layer block`. |
 | `exception` | `src/styles/exception.css` | Documented, deliberate local variation, expressed as `data-*` attributes. Never `!important`. |
 
+## Exceptions
+
+`data-*` attributes, never modifier classes — an exception is *state*, and a
+`data-` attribute says so out loud where `.card--major` just looks like another
+class. An exception retunes a Block's own custom properties rather than
+reaching inside it.
+
+An exception is legitimate when it varies an existing Block, is driven by data
+rather than by page position, and leaves the Block working if you delete it.
+It signals a **missing Block** when it is longer than the thing it modifies,
+when it changes layout rather than treatment, when it only applies on one page,
+or when you start climbing specificity to reach a target. Full rule, with
+reasoning, at the top of `src/styles/exception.css`.
+
 Every layer file wraps its own contents in its `@layer` block, so the import
 order in `index.css` is a convenience, not a load-bearing decision.
 
