@@ -218,7 +218,7 @@ describe("@issue-22 getStats", () => {
 		);
 		expect(stats.cadence.longestGapDays).toBeCloseTo(Math.max(...gaps), 6);
 
-		const [before, after] = stats.cadence.longestGapBetween;
+		const [before, after] = stats.cadence.longestGapBetween!;
 		const gap =
 			(index.byVersion.get(after)!.released.getTime()
 				- index.byVersion.get(before)!.released.getTime()) / 86_400_000;
@@ -226,7 +226,9 @@ describe("@issue-22 getStats", () => {
 	});
 
 	it("includes every month in the span, quiet ones included", () => {
-		const { byMonth, firstRelease, lastRelease } = stats.cadence;
+		const { byMonth } = stats.cadence;
+		const firstRelease = stats.cadence.firstRelease!;
+		const lastRelease = stats.cadence.lastRelease!;
 
 		const months =
 			(lastRelease.getUTCFullYear() - firstRelease.getUTCFullYear()) * 12
@@ -240,8 +242,19 @@ describe("@issue-22 getStats", () => {
 });
 
 describe("@issue-22 index construction", () => {
-	it("refuses to build an index over an empty collection", () => {
-		expect(() => buildIndex([])).toThrow(/empty/);
+	it("builds an empty index over an empty collection", () => {
+		// A changelog with nothing in it yet is a legitimate day-one state, not
+		// a misconfiguration — malformed content already fails at the schema.
+		const empty = buildIndex([]);
+
+		expect(empty.releases).toEqual([]);
+		expect(empty.tags).toEqual([]);
+		expect(empty.knownIssues).toEqual([]);
+		expect(empty.stats.totalReleases).toBe(0);
+		expect(empty.stats.cadence.firstRelease).toBeUndefined();
+		expect(empty.stats.cadence.longestGapBetween).toBeUndefined();
+		// Every change-type bucket still exists, so a page can iterate them.
+		expect([...empty.changesByType.keys()]).toHaveLength(6);
 	});
 
 	it("is independent of the order releases arrive in", () => {

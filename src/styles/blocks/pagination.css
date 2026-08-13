@@ -1,0 +1,46 @@
+/* Page numbers set as a printed index would set them: mono, tabular, the
+ * current page ruled rather than filled. */
+@layer block {
+	.pagination {
+		margin-block-start: var(--space-l);
+		padding-block-start: var(--space-s);
+		border-block-start: var(--rule-line-strong);
+	}
+
+	.pagination__pages {
+		--cluster-gap: var(--space-3xs) var(--space-xs);
+
+		padding-inline-start: 0;
+		list-style: none;
+	}
+
+	.pagination__step,
+	.pagination__page {
+		display: inline-block;
+		padding-block: var(--space-3xs);
+		color: var(--colour-ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		font-variant-numeric: tabular-nums;
+		letter-spacing: var(--tracking-label);
+		text-decoration: none;
+	}
+
+	a.pagination__step:hover,
+	a.pagination__step:focus-visible,
+	a.pagination__page:hover,
+	a.pagination__page:focus-visible {
+		color: var(--colour-accent);
+	}
+
+	/* A step that has nowhere to go is printed and struck through rather than
+	 * removed, so the control keeps its shape at both ends of the run. */
+	.pagination__step--spent {
+		color: var(--colour-rule-strong);
+	}
+
+	.pagination__page[aria-current="page"] {
+		color: var(--colour-ink);
+		border-block-end: var(--rule-line-heavy);
+	}
+}

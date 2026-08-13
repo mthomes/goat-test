@@ -84,12 +84,13 @@ export interface TagUsage {
 }
 
 export interface Cadence {
-	readonly firstRelease: Date;
-	readonly lastRelease: Date;
+	/** Undefined only when the collection is empty. */
+	readonly firstRelease?: Date;
+	readonly lastRelease?: Date;
 	readonly averageGapDays: number;
 	readonly longestGapDays: number;
-	/** The pair either side of the longest gap, older first. */
-	readonly longestGapBetween: readonly [string, string];
+	/** The pair either side of the longest gap, older first. Empty until there are two releases. */
+	readonly longestGapBetween?: readonly [string, string];
 	/** One entry per calendar month between the first and last release. */
 	readonly byMonth: readonly MonthCount[];
 }
@@ -154,8 +155,15 @@ function monthKey(date: Date): string {
 	return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
 }
 
+/** The index of a collection with nothing in it. A changelog starts here. */
+const EMPTY_CADENCE: Cadence = {
+	averageGapDays: 0,
+	longestGapDays: 0,
+	byMonth: [],
+};
+
 export function buildIndex(raw: readonly RawRelease[]): ReleaseIndex {
-	if (raw.length === 0) throw new Error("The releases collection is empty.");
+	if (raw.length === 0) return EMPTY_INDEX;
 
 	// Oldest first while deriving, because release type and prev/next are both
 	// statements about what came before.
@@ -272,7 +280,7 @@ export function buildIndex(raw: readonly RawRelease[]): ReleaseIndex {
 		longestGapBetween:
 			gaps.length > 0
 				? [ascending[longestGapAt].version, ascending[longestGapAt + 1].version]
-				: [ascending[0].version, ascending[0].version],
+				: undefined,
 		byMonth,
 	};
 
@@ -316,3 +324,30 @@ export function buildIndex(raw: readonly RawRelease[]): ReleaseIndex {
 		stats,
 	};
 }
+
+/**
+ * An empty collection is a legitimate day-one state for a changelog, not a
+ * misconfiguration — malformed content already fails loudly at the schema, so
+ * there is nothing here worth refusing to build over.
+ */
+const EMPTY_INDEX: ReleaseIndex = {
+	releases: [],
+	byVersion: new Map(),
+	tags: [],
+	changesByTag: new Map(),
+	changesByType: new Map(CHANGE_TYPES.map((type) => [type, []])),
+	knownIssues: [],
+	openKnownIssues: [],
+	resolvedKnownIssues: [],
+	stats: {
+		totalReleases: 0,
+		releasesByType: { major: 0, minor: 0, patch: 0 },
+		totalChanges: 0,
+		changesByType: Object.fromEntries(CHANGE_TYPES.map((type) => [type, 0])) as Record<ChangeType, number>,
+		totalTags: 0,
+		topTags: [],
+		knownIssues: { total: 0, open: 0, resolved: 0 },
+		fixedToBroken: Number.POSITIVE_INFINITY,
+		cadence: EMPTY_CADENCE,
+	},
+};

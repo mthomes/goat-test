@@ -1,0 +1,21 @@
+/* The archive's own furniture: a heading per major version, and the count
+ * line under the title. */
+@layer block {
+	.archive__count,
+	.archive__empty {
+		color: var(--colour-ink-muted);
+		font-family: var(--font-mono);
+		font-size: var(--step-down-1);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.archive__major-heading {
+		max-inline-size: none;
+		padding-block-end: var(--space-3xs);
+		border-block-end: var(--rule-line-heavy);
+		font-family: var(--font-mono);
+		font-size: var(--step-2);
+		font-variant-numeric: tabular-nums;
+		letter-spacing: var(--tracking-tight);
+	}
+}
