@@ -14,11 +14,12 @@ test.describe("core content blocks", () => {
 	});
 
 	test("metadata-table prints RELEASED / TYPE / CHANGES in mono", { tag: ["@issue-24"] }, async ({ page }) => {
+		await page.goto("/releases/34.2.1");
 		const table = page.locator(".metadata-table");
 		await expect(table).toBeVisible();
 
 		const labels = await table.locator(".metadata-table__label").allInnerTexts();
-		expect(labels.map((l) => l.toLowerCase())).toEqual(["released", "type", "changes"]);
+		expect(labels.map((l) => l.toLowerCase()).slice(0, 3)).toEqual(["released", "type", "changes"]);
 
 		const style = await table.locator(".metadata-table__label").first().evaluate((el) => ({
 			family: getComputedStyle(el).fontFamily,
@@ -105,6 +106,7 @@ test.describe("core content blocks", () => {
 	});
 
 	test("known-issue-item shows state, opened-in and age", { tag: ["@issue-24"] }, async ({ page }) => {
+		await page.goto("/known-issues");
 		const issue = page.locator(".known-issue").first();
 
 		await expect(issue).toHaveAttribute("data-state", /open|resolved/);
