@@ -20,6 +20,16 @@ export default getViteConfig({
 			reportsDirectory: "coverage",
 			reporter: ["text", "html", "json-summary", "lcov"],
 			include: ["src/lib/**"],
+			exclude: [
+				// The `astro:content` wrapper. Its virtual module resolves to an
+				// empty collection outside a build, so a unit test of it would
+				// pass while proving nothing. All of its logic lives in
+				// `release-index.ts`, which is covered directly, and the wrapper
+				// itself is exercised end to end by the E2E suite.
+				"src/lib/queries.ts",
+				// A frozen object of site constants. Nothing to execute.
+				"src/lib/site.ts",
+			],
 			thresholds: {
 				statements: 90,
 				branches: 85,
