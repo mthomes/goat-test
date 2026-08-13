@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "astro": "astro"
+    "astro": "astro",
+    "lint:style-blocks": "node scripts/lint-style-blocks.mjs"
   },
   "dependencies": {
     "astro": "^7.2.1"

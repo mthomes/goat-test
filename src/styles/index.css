@@ -1,0 +1,33 @@
+/* =========================================================================
+ * goat-test — global stylesheet entry point
+ * =========================================================================
+ *
+ * This is the ONLY stylesheet in the project. It is imported exactly once,
+ * from `src/layouts/BaseLayout.astro`. There are no `<style>` blocks in any
+ * `.astro` file, ever — see AGENTS.md for the rule and
+ * `npm run lint:style-blocks` for the check that enforces it.
+ *
+ * CUBE CSS layer order, declared here and nowhere else. Everything the site
+ * ships resolves against this single statement, so a rule's layer decides
+ * which rule wins — not its specificity, not its source order.
+ *
+ *   reset        the global tier: a minimal reset plus element-level defaults
+ *   tokens       every design decision, as custom properties
+ *   composition  layout primitives that arrange things without knowing what they are
+ *   utility      single-purpose classes, each tracing back to a token
+ *   block        the site's own components
+ *   exception    documented, deliberate local variation via data-* attributes
+ *
+ * The statement MUST come before any `@import`. Declaring the order up front
+ * is what lets each layer file below be authored in any order and still land
+ * in the right place in the cascade.
+ * ========================================================================= */
+
+@layer reset, tokens, composition, utility, block, exception;
+
+@import "./reset.css";
+@import "./tokens.css";
+@import "./composition.css";
+@import "./utility.css";
+@import "./blocks/index.css";
+@import "./exception.css";
