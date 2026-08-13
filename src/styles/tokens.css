@@ -1,4 +1,135 @@
-/* CUBE: tokens. Every design decision as a custom property.
- * Authored in #12 (palette, scales) and #17 (dark carbon-copy palette). */
+/* =========================================================================
+ * CUBE: tokens
+ * =========================================================================
+ *
+ * Every design decision in the project, expressed once, here. This is the
+ * only file in the codebase allowed to contain a literal colour, size or
+ * spacing value — everything in `composition`, `utility`, `block` and
+ * `exception` resolves through a custom property defined below.
+ *
+ * Naming is uniform kebab-case in five groups:
+ *
+ *   --colour-*       palette
+ *   --step-*         fluid type scale
+ *   --space-*        fluid space scale, plus --flow-space-*
+ *   --font-*         family stacks
+ *   --measure-*, --rule-*, --border-*   everything else
+ *
+ * The dark palette (#17) redefines the *values* of the colour tokens inside
+ * `@media (prefers-color-scheme: dark)`. It never adds or renames one: if any
+ * layer below tokens needs a dark-mode branch, a token is missing.
+ * ========================================================================= */
+
 @layer tokens {
+	:root {
+		/* -------------------------------------------------------- palette --
+		 *
+		 * Cream paper, ink black, oxblood accent — a page printed in two
+		 * colours in 1987, plus the greys a laser printer could actually hold.
+		 *
+		 * Contrast, measured (WCAG 2.1, sRGB):
+		 *
+		 *   ink        on paper        15.13:1   AAA
+		 *   ink-muted  on paper         6.85:1   AA
+		 *   accent     on paper         8.87:1   AAA
+		 *   ink        on paper-inset  13.43:1   AAA
+		 *   ink-muted  on paper-inset   6.08:1   AA
+		 *   accent     on paper-inset   7.87:1   AAA
+		 *
+		 * Muted-on-cream is where contrast bugs hide, so `--colour-ink-muted`
+		 * is deliberately darker than it looks like it needs to be. The rule
+		 * tones are decorative hairlines rather than text or UI boundaries;
+		 * `--colour-rule-strong` clears 3:1 for the cases where a border does
+		 * carry meaning.
+		 */
+		--colour-paper: #f2ede1;
+		--colour-paper-inset: #e7e0ce;
+		--colour-ink: #1b1815;
+		--colour-ink-muted: #57503f;
+		--colour-accent: #7a1d23;
+		--colour-rule: #c4b9a1;
+		--colour-rule-strong: #8a8069;
+
+		/* ------------------------------------------------------ type scale --
+		 *
+		 * Utopia fluid scale (utopia.fyi), computed from:
+		 *
+		 *   viewport   320px → 1240px
+		 *   base size   18px → 20px
+		 *   ratio      1.2 (minor third) → 1.25 (major third)
+		 *
+		 * The ratio widening with the viewport is what keeps headings
+		 * emphatic on a wide page without shouting on a phone.
+		 */
+		--step-down-1: clamp(0.9375rem, 0.9158rem + 0.1087vw, 1rem); /* 15px → 16px */
+		--step-0: clamp(1.125rem, 1.0815rem + 0.2174vw, 1.25rem); /* 18px → 20px */
+		--step-1: clamp(1.35rem, 1.2761rem + 0.3696vw, 1.5625rem); /* 21.6px → 25px */
+		--step-2: clamp(1.62rem, 1.5041rem + 0.5793vw, 1.9531rem); /* 25.9px → 31.3px */
+		--step-3: clamp(1.944rem, 1.771rem + 0.8651vw, 2.4414rem); /* 31.1px → 39.1px */
+		--step-4: clamp(2.3328rem, 2.0827rem + 1.2504vw, 3.0518rem); /* 37.3px → 48.8px */
+		--step-5: clamp(2.7994rem, 2.4462rem + 1.7658vw, 3.8147rem); /* 44.8px → 61.0px */
+		--step-6: clamp(3.3592rem, 2.8691rem + 2.4507vw, 4.7684rem); /* 53.7px → 76.3px */
+
+		/* ----------------------------------------------------- space scale --
+		 * Same source, same viewport range, multiples of the base size. */
+		--space-3xs: clamp(0.3125rem, 0.3125rem + 0vw, 0.3125rem); /* 5px */
+		--space-2xs: clamp(0.5625rem, 0.5408rem + 0.1087vw, 0.625rem); /* 9px → 10px */
+		--space-xs: clamp(0.875rem, 0.8533rem + 0.1087vw, 0.9375rem); /* 14px → 15px */
+		--space-s: clamp(1.125rem, 1.0815rem + 0.2174vw, 1.25rem); /* 18px → 20px */
+		--space-m: clamp(1.6875rem, 1.6223rem + 0.3261vw, 1.875rem); /* 27px → 30px */
+		--space-l: clamp(2.25rem, 2.163rem + 0.4348vw, 2.5rem); /* 36px → 40px */
+		--space-xl: clamp(3.375rem, 3.2446rem + 0.6522vw, 3.75rem); /* 54px → 60px */
+		--space-2xl: clamp(4.5rem, 4.3261rem + 0.8696vw, 5rem); /* 72px → 80px */
+		--space-3xl: clamp(6.75rem, 6.4891rem + 1.3043vw, 7.5rem); /* 108px → 120px */
+
+		/* -------------------------------------------------- one-up pairs --
+		 * A pair grows from one rung at the narrow end to the next rung up at
+		 * the wide end, so a gap can open up faster than the type does. */
+		--space-3xs-2xs: clamp(0.3125rem, 0.2038rem + 0.5435vw, 0.625rem); /* 5px → 10px */
+		--space-2xs-xs: clamp(0.5625rem, 0.4321rem + 0.6522vw, 0.9375rem); /* 9px → 15px */
+		--space-xs-s: clamp(0.875rem, 0.7446rem + 0.6522vw, 1.25rem); /* 14px → 20px */
+		--space-s-m: clamp(1.125rem, 0.8641rem + 1.3043vw, 1.875rem); /* 18px → 30px */
+		--space-m-l: clamp(1.6875rem, 1.4049rem + 1.413vw, 2.5rem); /* 27px → 40px */
+		--space-l-xl: clamp(2.25rem, 1.7283rem + 2.6087vw, 3.75rem); /* 36px → 60px */
+		--space-xl-2xl: clamp(3.375rem, 2.8098rem + 2.8261vw, 5rem); /* 54px → 80px */
+		--space-2xl-3xl: clamp(4.5rem, 3.4565rem + 5.2174vw, 7.5rem); /* 72px → 120px */
+
+		/* -------------------------------------------------- flow spacing --
+		 *
+		 * The default gap `.stack` puts between siblings, with the rung above
+		 * and the rung below it named so a block can loosen or tighten its
+		 * own rhythm by one step without reaching for a raw space value.
+		 */
+		--flow-space-tight: var(--space-xs-s);
+		--flow-space: var(--space-s-m);
+		--flow-space-loose: var(--space-m-l);
+
+		/* ----------------------------------------------------- typefaces --
+		 *
+		 * Serif for prose, monospace for metadata — the split the whole art
+		 * direction rests on. #16 selects the faces, self-hosts them, and
+		 * puts them at the front of these stacks; until then they resolve to
+		 * the platform's own.
+		 */
+		--font-serif: charter, ui-serif, georgia, "times new roman", serif;
+		--font-mono: "ibm plex mono", ui-monospace, sfmono-regular, menlo, consolas, monospace;
+
+		/* ------------------------------------------------------- measure --
+		 * Line length. 66 characters for prose, tighter for standfirsts and
+		 * anything set at a large step. */
+		--measure: 66ch;
+		--measure-narrow: 46ch;
+
+		/* ---------------------------------------------- rules and borders --
+		 *
+		 * A printed manual rules its page in a small number of fixed weights
+		 * and never anything in between. Hairline is the default; medium
+		 * separates sections; heavy is reserved for a major version.
+		 */
+		--rule-hairline: 1px;
+		--rule-medium: 2px;
+		--rule-heavy: 3px;
+		--border-width: var(--rule-hairline);
+		--border-width-thick: var(--rule-medium);
+	}
 }
